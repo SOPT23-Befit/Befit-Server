@@ -19,7 +19,7 @@ import static org.sopt.befit.model.DefaultRes.FAIL_DEFAULT_RES;
 
 @Slf4j
 @RestController
-@RequestMapping("users")
+@RequestMapping("user")
 public class UserController {
 
     private final UserService userService;

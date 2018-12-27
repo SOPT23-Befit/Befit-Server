@@ -31,6 +31,13 @@ public class UserService {
         this.s3FileUploadService = s3fileUploadService;
     }
 
+    //befit index로 회원 조회 (O)
+    public DefaultRes findByIdx(final int userIdx){
+        final User user = userMapper.findByUserIdx(userIdx);
+        if(user == null)
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, user);
+    }
 
    //모든회원 조회
     public DefaultRes getAllUsers() {
@@ -52,8 +59,6 @@ public class UserService {
     @Transactional
     public DefaultRes save(SignUpReq signUpReq) {
         try {
-            if(signUpReq.getProfile() != null)
-                signUpReq.setProfileUrl(s3FileUploadService.upload(signUpReq.getProfile()));
             userMapper.save(signUpReq);
             return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER);
         } catch (Exception e) {
@@ -64,25 +69,25 @@ public class UserService {
         }
     }
 
-    //회원정보 수정
-    @Transactional
-    public DefaultRes update(final SignUpReq signUpReq, final int userIdx) {
-        User temp = userMapper.findByUserIdx(userIdx);
-        if (temp == null)
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
-        try {
-            if (signUpReq.getName() != null) temp.setName(signUpReq.getName());
-            if (signUpReq.getPart() != null) temp.setPart(signUpReq.getPart());
-            if(signUpReq.getProfileUrl() != null) temp.setProfileUrl(signUpReq.getProfileUrl());
-            userMapper.update(userIdx, temp);
-            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.UPDATE_USER);
-        } catch (Exception e) {
-            //Rollback
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            log.error(e.getMessage());
-            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
-        }
-    }
+//    //회원정보 수정
+//    @Transactional
+//    public DefaultRes update(final SignUpReq signUpReq, final int userIdx) {
+//        User temp = userMapper.findByUserIdx(userIdx);
+//        if (temp == null)
+//            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+//        try {
+//            if (signUpReq.getName() != null) temp.setName(signUpReq.getName());
+//            if (signUpReq.getPart() != null) temp.setPart(signUpReq.getPart());
+//            if(signUpReq.getProfileUrl() != null) temp.setProfileUrl(signUpReq.getProfileUrl());
+//            userMapper.update(userIdx, temp);
+//            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.UPDATE_USER);
+//        } catch (Exception e) {
+//            //Rollback
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//            log.error(e.getMessage());
+//            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+//        }
+//    }
 
     //회원 탈퇴
     @Transactional

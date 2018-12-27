@@ -3,6 +3,7 @@ package org.sopt.befit.mapper;
 import org.apache.ibatis.annotations.*;
 import org.sopt.befit.dto.User;
 import org.sopt.befit.model.SignUpReq;
+import org.sopt.befit.model.UserupdateReq;
 
 import java.util.List;
 
@@ -17,20 +18,25 @@ public interface UserMapper {
     User findByName(@Param("name") final String name);
 
     //회원 고유 번호로 조회 befit
-    @Select("SELECT * FROM user WHERE userIdx = #{userIdx}")
-    User findByUserIdx(@Param("userIdx") final int userIdx);
+    @Select("SELECT * FROM user WHERE Idx = #{Idx}")
+    User findByUserIdx(@Param("Idx") final int userIdx);
 
     @Select("SELECT * FROM user WHERE email = #{email} AND password= #{password}")
     User findByEmailAndPassword(@Param("email") final String email, @Param("password") final String password);
-
 
     //회원 가입 befit
     @Insert("INSERT INTO user(email, password, name, gender, brand1_idx, brand2_idx, birthday) VALUES(#{signUpReq.email}, #{signUpReq.password}, #{signUpReq.name}, #{signUpReq.gender}, #{signUpReq.brand1_idx}, #{signUpReq.brand2_idx}, #{signUpReq.birthday})")
     void save(@Param("signUpReq") final SignUpReq signUpReq);
 
-    //회원 정보 수정
-    @Update("UPDATE user SET name = #{user.name}, part = #{user.part} WHERE userIdx = #{userIdx}")
-    void update(@Param("userIdx") final int userIdx, @Param("user") final User user);
+    //회원 정보 수정 brand 수정 befit
+    @Update("UPDATE user SET brand1_idx = #{userupdateReq.brand1_idx}, brand2_idx = #{userupdateReq.brand2_idx} WHERE idx = #{idx}")
+    void updateBrand(@Param("userupdateReq") final UserupdateReq userupdateReq, @Param("idx") final int idx);
+
+
+
+    //회원 정보 수정 통합회원가입 폼 수정 befit
+    @Update("UPDATE user SET phone = #{userupdateReq.phone}, post_number = #{userupdateReq.post_number}, home_address = #{userupdateReq.home_address}, detail_address = #{userupdateReq.detail_address}  WHERE idx = #{idx}")
+    void updateCombineForm(@Param("userupdateReq") final UserupdateReq userupdateReq, @Param("idx") final int idx);
 
     //회원 삭제
     @Delete("DELETE FROM user where userIdx = #{userIdx}")

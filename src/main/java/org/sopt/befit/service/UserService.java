@@ -5,6 +5,7 @@ import org.sopt.befit.dto.User;
 import org.sopt.befit.mapper.UserMapper;
 import org.sopt.befit.model.DefaultRes;
 import org.sopt.befit.model.SignUpReq;
+import org.sopt.befit.model.UserupdateReq;
 import org.sopt.befit.utils.ResponseMessage;
 import org.sopt.befit.utils.StatusCode;
 import org.springframework.stereotype.Service;
@@ -69,25 +70,40 @@ public class UserService {
         }
     }
 
-//    //회원정보 수정
-//    @Transactional
-//    public DefaultRes update(final SignUpReq signUpReq, final int userIdx) {
-//        User temp = userMapper.findByUserIdx(userIdx);
-//        if (temp == null)
-//            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
-//        try {
-//            if (signUpReq.getName() != null) temp.setName(signUpReq.getName());
-//            if (signUpReq.getPart() != null) temp.setPart(signUpReq.getPart());
-//            if(signUpReq.getProfileUrl() != null) temp.setProfileUrl(signUpReq.getProfileUrl());
-//            userMapper.update(userIdx, temp);
-//            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.UPDATE_USER);
-//        } catch (Exception e) {
-//            //Rollback
-//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-//            log.error(e.getMessage());
-//            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
-//        }
-//    }
+    //회원정보 수정 (brand 수정)
+    @Transactional
+    public DefaultRes updateBrand(final UserupdateReq userupdateReq, final int userIdx) {
+        try {
+            log.info(userupdateReq.toString() + ">" + userupdateReq.is_brand());
+            if(userupdateReq.is_brand()){
+                userMapper.updateBrand(userupdateReq, userIdx);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER);
+            }
+            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.INVALID_UPDATE_USER);
+        } catch (Exception e) {
+            //Rollback
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        }
+    }
+
+    @Transactional
+    public DefaultRes updateCombineForm(final UserupdateReq userupdateReq, final int userIdx) {
+        try {
+            log.info(userupdateReq.toString() + ">" + userupdateReq.is_combineForm());
+            if(userupdateReq.is_combineForm()){
+                userMapper.updateCombineForm(userupdateReq, userIdx);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER);
+            }
+            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.INVALID_UPDATE_USER);
+        } catch (Exception e) {
+            //Rollback
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        }
+    }
 
     //회원 탈퇴
     @Transactional

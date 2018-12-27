@@ -104,10 +104,14 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{userIdx}")
-    public ResponseEntity deleteUser(@PathVariable(value = "userIdx") final int userIdx) {
+    @DeleteMapping("")
+    public ResponseEntity deleteUser(@RequestHeader("Authorization") final String header) {
         try {
-            return new ResponseEntity<>(userService.deleteByUserIdx(userIdx), HttpStatus.OK);
+            if(header != null){
+                int curIdx = jwtService.decode(header).getIdx();
+                return new ResponseEntity<>(userService.deleteByUserIdx(curIdx), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.NOT_FOUND_USER), HttpStatus.OK);
         }catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);

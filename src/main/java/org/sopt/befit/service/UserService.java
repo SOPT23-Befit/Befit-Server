@@ -109,10 +109,9 @@ public class UserService {
     @Transactional
     public DefaultRes deleteByUserIdx(final int userIdx) {
         final User user = userMapper.findByUserIdx(userIdx);
-        if (user == null)
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
-
         try {
+            if (user == null)
+                return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
             userMapper.deleteByUserIdx(userIdx);
             return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.DELETE_USER);
         } catch (Exception e) {

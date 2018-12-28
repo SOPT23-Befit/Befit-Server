@@ -4,6 +4,8 @@ package org.sopt.befit.utils;
 import java.security.MessageDigest;
 
 //복호화 키는 없음
+//단방향 해시함수 ("해커가 여러개의 다이제스트된 값을 생성해서 비교하면, 사용자의 password가 쉽게 뚫릴 수 있음")
+//따라서 사용자에게 긴 길이의 password 설정을 권장해야하는 방식이다.
 
 public class SHA512EncryptUtils {
 

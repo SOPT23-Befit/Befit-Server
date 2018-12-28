@@ -13,6 +13,9 @@ import org.sopt.befit.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import static com.auth0.jwt.JWT.require;
 
 @Slf4j
@@ -25,14 +28,15 @@ public class JwtService {
     @Value("${JWT.SECRET}")
     private String SECRET;
 
-    private UserMapper userMapper;
 
     //토큰 생성
-    public String create(final int user_idx){
+    public String create(final int idx){
         try{
             JWTCreator.Builder b = JWT.create();
             b.withIssuer(ISSUER);
-            b.withClaim("user_idx", user_idx);
+            b.withClaim("idx", idx);
+            //만료 날짜 지정, 1달
+            b.withExpiresAt(expiresAt());
             return b.sign(Algorithm.HMAC256(SECRET));
         }catch (JWTCreationException jwtCreationException){
             log.info(jwtCreationException.getMessage());
@@ -40,13 +44,20 @@ public class JwtService {
         return null;
     }
 
+    private Date expiresAt(){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        //한달 : 24*31
+        cal.add(Calendar.HOUR, 744);
+        return cal.getTime();
+    }
+
     //토큰 해독
     public Token decode(final String token) {
         try {
             final JWTVerifier jwtVerifier = require(Algorithm.HMAC256(SECRET)).withIssuer(ISSUER).build();
             DecodedJWT decodedJWT = jwtVerifier.verify(token);
-            return new Token(decodedJWT.getClaim("user_idx").asLong().intValue());
-
+            return new Token(decodedJWT.getClaim("idx").asLong().intValue());
         } catch (JWTVerificationException jve) {
             log.error(jve.getMessage());
         } catch (Exception e) {
@@ -55,10 +66,10 @@ public class JwtService {
         return new Token();
     }
 
-    public int isUser(final String header, final int userIdx) { //userIdx 내가 수정하려는!!
-        int curIdx = decode(header).getUser_idx();
+    public int isUser(final String header, final int user_idx) { //userIdx 내가 수정하려는!!
+        int curIdx = decode(header).getIdx();
         if (curIdx != -1) {
-            if (curIdx == userIdx) {
+            if (curIdx == user_idx) {
                 return 1;
             }
         }
@@ -66,16 +77,15 @@ public class JwtService {
     }
 
     public static class Token{
-        private int user_idx = -1;
+        private int idx = -1;
 
         public Token(){}
 
         public Token(final int user_idx){
-            this.user_idx = user_idx;
+            this.idx = user_idx;
         }
-        public int getUser_idx(){
-            return this.user_idx;
-        }
+        public int getIdx(){return this.idx; }
+
     }
 
     public static class TokenRes{

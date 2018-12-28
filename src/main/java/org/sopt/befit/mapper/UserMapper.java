@@ -3,6 +3,7 @@ package org.sopt.befit.mapper;
 import org.apache.ibatis.annotations.*;
 import org.sopt.befit.dto.User;
 import org.sopt.befit.model.SignUpReq;
+import org.sopt.befit.model.UserupdateReq;
 
 import java.util.List;
 
@@ -12,34 +13,33 @@ public interface UserMapper {
     @Select("SELECT * FROM user")
     List<User> findAll();
 
-    //회원 이름으로 조회
-    @Select("SELECT * FROM user WHERE name = #{name}")
-    User findByName(@Param("name") final String name);
+    //회원 이메일로 조회 befit
+    @Select("SELECT * FROM user WHERE email = #{email}")
+    User findByEmail(@Param("email") final String email);
 
-    //회원 고유 번호로 조회
-    @Select("SELECT * FROM user WHERE userIdx = #{userIdx}")
-    User findByUserIdx(@Param("userIdx") final int userIdx);
+    //회원 고유 번호로 조회 befit
+    @Select("SELECT * FROM user WHERE Idx = #{Idx}")
+    User findByUserIdx(@Param("Idx") final int userIdx);
 
-    @Select("SELECT * FROM user WHERE name = #{name} AND password= #{password}")
-    User findByNameAndPassword(@Param("name") final String name, @Param("password") final String password);
+    //이메일과 패스워드 같은지 확인 befit
+    @Select("SELECT * FROM user WHERE email = #{email} AND password= #{password}")
+    User findByEmailAndPassword(@Param("email") final String email, @Param("password") final String password);
 
-    //회원 등록, Auto Increment는 회원 고유 번호
-    //Auto Increment 값을 받아오고 싶으면 리턴 타입을 int(Auto Increment 컬럼 타입)으로 하면 된다.
-    @Insert("INSERT INTO user(name, part, profileUrl,password) VALUES(#{signUpReq.name}, #{signUpReq.part}, #{signUpReq.profileUrl}, #{signUpReq.password})")
-    //@Options(useGeneratedKeys = true, keyColumn = "user.userIdx")
+    //회원 가입 befit
+    @Insert("INSERT INTO user(email, password, name, gender, brand1_idx, brand2_idx, birthday) VALUES(#{signUpReq.email}, #{signUpReq.password}, #{signUpReq.name}, #{signUpReq.gender}, #{signUpReq.brand1_idx}, #{signUpReq.brand2_idx}, #{signUpReq.birthday})")
     void save(@Param("signUpReq") final SignUpReq signUpReq);
 
-    //Auto Increment 값을 받아오고 싶지 않다면 필요 없다.
-    @Insert("INSERT INTO user(name, part) VALUES(#{user.name}, #{user.part})")
-    void save2(@Param("user") final User user);
+    //회원 정보 수정 brand 수정 befit
+    @Update("UPDATE user SET brand1_idx = #{userupdateReq.brand1_idx}, brand2_idx = #{userupdateReq.brand2_idx} WHERE idx = #{idx}")
+    void updateBrand(@Param("userupdateReq") final UserupdateReq userupdateReq, @Param("idx") final int idx);
 
-    //회원 정보 수정
-    @Update("UPDATE user SET name = #{user.name}, part = #{user.part} WHERE userIdx = #{userIdx}")
-    void update(@Param("userIdx") final int userIdx, @Param("user") final User user);
+    //회원 정보 수정 통합회원가입 폼 수정 befit
+    @Update("UPDATE user SET phone = #{userupdateReq.phone}, post_number = #{userupdateReq.post_number}, home_address = #{userupdateReq.home_address}, detail_address = #{userupdateReq.detail_address}  WHERE idx = #{idx}")
+    void updateCombineForm(@Param("userupdateReq") final UserupdateReq userupdateReq, @Param("idx") final int idx);
 
     //회원 삭제
-    @Delete("DELETE FROM user where userIdx = #{userIdx}")
-    void deleteByUserIdx(@Param("userIdx") final int userIdx);
+    @Delete("DELETE FROM user where idx = #{idx}")
+    void deleteByUserIdx(@Param("idx") final int idx);
 }
 
 

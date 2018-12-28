@@ -21,9 +21,9 @@ public class AuthService {
     }
 
     public DefaultRes<JwtService.TokenRes> login(final LoginReq loginReq){
-        final User user = userMapper.findByNameAndPassword(loginReq.getName(), loginReq.getPassword());
+        final User user = userMapper.findByEmailAndPassword(loginReq.getEmail(), loginReq.getPassword());
         if(user !=null){
-            final JwtService.TokenRes tokenDto = new JwtService.TokenRes(jwtService.create(user.getUserIdx()));
+            final JwtService.TokenRes tokenDto = new JwtService.TokenRes(jwtService.create(user.getIdx()));
             return DefaultRes.res(StatusCode.OK, ResponseMessage.LOGIN_SUCCESS, tokenDto);
         }
         return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.LOGIN_FAIL);

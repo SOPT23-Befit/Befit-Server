@@ -1,8 +1,11 @@
 package org.sopt.befit.api;
 
+import jdk.net.SocketFlow;
 import lombok.extern.slf4j.Slf4j;
+import org.sopt.befit.dto.User;
 import org.sopt.befit.model.DefaultRes;
 import org.sopt.befit.model.SignUpReq;
+import org.sopt.befit.model.UserupdateReq;
 import org.sopt.befit.service.JwtService;
 import org.sopt.befit.service.UserService;
 import org.sopt.befit.utils.Auth.Auth;
@@ -27,32 +30,76 @@ public class UserController {
     private final JwtService jwtService;
 
 
-
     public UserController(final UserService userService, final JwtService jwtService) {
         this.userService = userService;
         this.jwtService = jwtService;
     }
 
-    @GetMapping("")
-    public ResponseEntity getUser(@RequestParam("name") final Optional<String> name) {
+    @Auth
+    @GetMapping("") //befit 회원 조회 (O)
+    public ResponseEntity getUser(@RequestHeader("Authorization") final String header) {
         try {
-//            log.info("ID: "+ jwtService.decode(header));
-            //name이 null일 경우 false, null이 아닐 경우 true
-            if(name.isPresent()) return new ResponseEntity<>(userService.findByName(name.get()), HttpStatus.OK);
-            return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+            if(header != null){
+                int curIdx = jwtService.decode(header).getIdx();
+                return new ResponseEntity<>(userService.findByIdx(curIdx), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.NOT_CURRENT_USER), HttpStatus.OK);
         }catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PostMapping("")
-    public ResponseEntity signup(SignUpReq signUpReq, @RequestPart(value = "profile", required = false) final MultipartFile profile) {
+    @PostMapping("") // befit 회원 가입
+    public ResponseEntity signup(@RequestBody final SignUpReq signUpReq) {
         try {
-            //파일을 SignUpReq에 저장
-            if(profile != null)
-                signUpReq.setProfile(profile);
-            return new ResponseEntity<>(userService.save(signUpReq), HttpStatus.OK);
+            if(signUpReq!=null){
+                log.info(signUpReq.toString());
+                return new ResponseEntity<>(userService.save(signUpReq), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.INVALID_CREATED_USER), HttpStatus.OK);
+        }catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //befit 특정 회원, brand 수정
+    @Auth
+    @PutMapping("/brand")
+    public ResponseEntity updateUser(
+            @RequestHeader("Authorization") final String header,
+            @RequestBody final UserupdateReq userupdateReq) {
+        try {
+            if(userupdateReq!=null){
+                if(header != null){
+                    int curIdx = jwtService.decode(header).getIdx();
+                    return new ResponseEntity(userService.updateBrand(userupdateReq , curIdx), HttpStatus.OK);
+                }
+                return new ResponseEntity(new DefaultRes(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.HAVE_NOT_UPDATE_USER), HttpStatus.OK);
+        }catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //befit 특정 회원, 통합 회원가입 수정
+    @Auth
+    @PutMapping("/combineForm")
+    public ResponseEntity updateCombineForm(@RequestHeader("Authorization") final String header,
+                                            @RequestBody final UserupdateReq userupdateReq){
+        try {
+            if(userupdateReq!=null){
+//                log.info(userupdateReq.toString());
+                if(header!=null){
+                    int curIdx = jwtService.decode(header).getIdx();
+                    return new ResponseEntity(userService.updateCombineForm(userupdateReq, curIdx), HttpStatus.OK);
+                }
+                return new ResponseEntity(new DefaultRes(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.HAVE_NOT_UPDATE_USER), HttpStatus.OK);
         }catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -60,29 +107,14 @@ public class UserController {
     }
 
     @Auth
-    @PutMapping("/{userIdx}")
-    public ResponseEntity updateUser(
-            @RequestHeader("Authorization") final String header,
-            @PathVariable(value = "userIdx") final int userIdx,
-            SignUpReq signUpReq, @RequestPart(value="profile", required=false) final MultipartFile profile) {
+    @DeleteMapping("")
+    public ResponseEntity deleteUser(@RequestHeader("Authorization") final String header) {
         try {
-            if(jwtService.isUser(header, userIdx) == 1){ //user가 맞을 때.
-                if(profile != null)
-                    signUpReq.setProfile(profile);
-                return new ResponseEntity<>(userService.update(signUpReq, userIdx), HttpStatus.OK);
+            if(header != null){
+                int curIdx = jwtService.decode(header).getIdx();
+                return new ResponseEntity<>(userService.deleteByUserIdx(curIdx), HttpStatus.OK);
             }
-            return new ResponseEntity(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.NOT_CURRENT_USER), HttpStatus.OK);
-
-        }catch (Exception e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @DeleteMapping("/{userIdx}")
-    public ResponseEntity deleteUser(@PathVariable(value = "userIdx") final int userIdx) {
-        try {
-            return new ResponseEntity<>(userService.deleteByUserIdx(userIdx), HttpStatus.OK);
+            return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.NOT_FOUND_USER), HttpStatus.OK);
         }catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);

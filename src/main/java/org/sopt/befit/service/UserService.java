@@ -1,6 +1,7 @@
 package org.sopt.befit.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.mindrot.jbcrypt.BCrypt;
 import org.sopt.befit.dto.User;
 import org.sopt.befit.mapper.UserMapper;
 import org.sopt.befit.model.DefaultRes;
@@ -49,10 +50,13 @@ public class UserService {
             final User user = userMapper.findByEmail(signUpReq.getEmail());
             if (user == null) {
                 try {
+
+
                     //암호화
                     log.info(signUpReq.getPassword());
-                    String passEncrypt = signUpReq.getPassword();
-                    signUpReq.setPassword(SHA512EncryptUtils.encrypt(passEncrypt));
+                    //getsalt() : 숫자가 높아질수록 해쉬를 생성하고 검증하는 시간은 느려진다. 즉, 보안이 우수해진다. 하지만 그만큼 응답 시간이 느려지기 때문에 적절한 숫자를 선정해야 한다. 기본값은 10이다.
+                    String passwordHashed = BCrypt.hashpw(signUpReq.getPassword(), BCrypt.gensalt());
+                    signUpReq.setPassword(passwordHashed);
                     log.info(signUpReq.getPassword());
 
                     //mapper 사용

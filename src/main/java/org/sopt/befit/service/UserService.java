@@ -7,6 +7,7 @@ import org.sopt.befit.model.DefaultRes;
 import org.sopt.befit.model.SignUpReq;
 import org.sopt.befit.model.UserupdateReq;
 import org.sopt.befit.utils.ResponseMessage;
+import org.sopt.befit.utils.SHA512EncryptUtils;
 import org.sopt.befit.utils.StatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,16 +21,13 @@ public class UserService {
 
     private final UserMapper userMapper;
 
-    private final S3FileUploadService s3FileUploadService;
-
     /**
      * UserMapper 생성자 의존성 주입
      *
      * @param userMapper
      */
-    public UserService(final UserMapper userMapper, S3FileUploadService s3fileUploadService) {
+    public UserService(final UserMapper userMapper) {
         this.userMapper = userMapper;
-        this.s3FileUploadService = s3fileUploadService;
     }
 
     //befit index로 회원 조회 (O)
@@ -60,7 +58,14 @@ public class UserService {
     @Transactional
     public DefaultRes save(SignUpReq signUpReq) {
         try {
+            //암호화
+            log.info(signUpReq.getPassword());
+            String passEncrypt = signUpReq.getPassword();
+            signUpReq.setPassword(SHA512EncryptUtils.encrypt(passEncrypt));
+            log.info(signUpReq.getPassword());
+
             userMapper.save(signUpReq);
+
             return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER);
         } catch (Exception e) {
             //Rollback

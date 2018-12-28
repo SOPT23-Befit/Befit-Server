@@ -1,8 +1,10 @@
 package org.sopt.befit.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class UserupdateReq {
     private int brand1_idx; //brand select
     private int brand2_idx; //brand select
@@ -10,6 +12,7 @@ public class UserupdateReq {
     private String post_number;
     private String home_address;
     private String detail_address;
+
 
     public boolean is_brand(){
         return(this.brand1_idx != 0 && this.brand2_idx !=0 ); //brand 참조

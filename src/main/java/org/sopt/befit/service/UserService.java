@@ -5,10 +5,10 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.sopt.befit.dto.User;
 import org.sopt.befit.mapper.UserMapper;
 import org.sopt.befit.model.DefaultRes;
+import org.sopt.befit.model.PasswordFind;
 import org.sopt.befit.model.SignUpReq;
 import org.sopt.befit.model.UserupdateReq;
 import org.sopt.befit.utils.ResponseMessage;
-import org.sopt.befit.utils.SHA512EncryptUtils;
 import org.sopt.befit.utils.StatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +42,18 @@ public class UserService {
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, userList);
     }
 
+    //password 새로 생성을위한 inform mation 체크 > 이후 password 변경을 위한 idx 전달
+    public DefaultRes InformForSetNewPass(final PasswordFind passwordFind){
+        if(passwordFind.is_finding_content()){
+            final User user = userMapper.findPasswordCheck(passwordFind);
+            if(user != null){
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER_CHECK,"userIdx : " + user.getIdx());
+            }
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+        }
+        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.HAVE_NOT_UPDATE_USER);
+    }
+
     //회원가입
     @Transactional
     public DefaultRes save(final SignUpReq signUpReq) {
@@ -50,8 +62,6 @@ public class UserService {
             final User user = userMapper.findByEmail(signUpReq.getEmail());
             if (user == null) {
                 try {
-
-
                     //암호화
                     log.info(signUpReq.getPassword());
                     //getsalt() : 숫자가 높아질수록 해쉬를 생성하고 검증하는 시간은 느려진다. 즉, 보안이 우수해진다. 하지만 그만큼 응답 시간이 느려지기 때문에 적절한 숫자를 선정해야 한다. 기본값은 10이다.
@@ -70,6 +80,26 @@ public class UserService {
             } else return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ALREADY_USER);
         }
         return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.INVALID_CREATED_USER);
+    }
+
+    //회원정보 수정 (password 수정)
+    @Transactional
+    public DefaultRes updateUser(final PasswordFind passwordFind) {
+        try {
+            log.info(passwordFind.toString() + ">" + passwordFind.is_password());
+            if(passwordFind.is_password()){
+                String passwordHashed = BCrypt.hashpw(passwordFind.getPassword(), BCrypt.gensalt());
+                passwordFind.setPassword(passwordHashed);
+                userMapper.updatePassword(passwordFind);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.userNUM_message(passwordFind.getUserIdx(), ResponseMessage.UPDATE_PASSWORD_USER));
+            }
+            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.INVALID_UPDATE_USER);
+        } catch (Exception e) {
+            //Rollback
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+        }
     }
 
     //회원정보 수정 (brand 수정)

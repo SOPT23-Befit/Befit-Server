@@ -4,6 +4,7 @@ import jdk.net.SocketFlow;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.befit.dto.User;
 import org.sopt.befit.model.DefaultRes;
+import org.sopt.befit.model.PasswordFind;
 import org.sopt.befit.model.SignUpReq;
 import org.sopt.befit.model.UserupdateReq;
 import org.sopt.befit.service.JwtService;
@@ -36,7 +37,7 @@ public class UserController {
     }
 
     @Auth
-    @GetMapping("") //befit 회원 조회 (O)
+    @GetMapping("") //befit 회원 조회 : 현재 로그인한 회원 정보 조회하기 (O)
     public ResponseEntity getUser(@RequestHeader("Authorization") final String header) {
         try {
             if(header != null){
@@ -45,6 +46,17 @@ public class UserController {
             }
             return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.NOT_CURRENT_USER), HttpStatus.OK);
         }catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/passwordFind") //befit 회원 조회 : 패스워드 변경을 위한 회원 정보 조회하기
+    public ResponseEntity checkUser (@RequestBody final PasswordFind passwordFind){
+        try{
+            log.info(passwordFind.toString());
+            return new ResponseEntity(userService.InformForSetNewPass(passwordFind), HttpStatus.OK);
+        }catch (Exception e){
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -64,10 +76,31 @@ public class UserController {
         }
     }
 
+
+
+    //befit 회원 비밀번호 수정하기
+    @PutMapping("")
+    public ResponseEntity updateUser(
+            @RequestBody final PasswordFind passwordFind){
+        try{
+            if(passwordFind!=null){
+                if(passwordFind.getPassword() != null){
+                    return new ResponseEntity(userService.updateUser(passwordFind), HttpStatus.OK);
+                }
+                return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.HAVE_NOT_UPDATE_USER), HttpStatus.OK);
+            }
+            return new ResponseEntity(new DefaultRes(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER), HttpStatus.OK);
+
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     //befit 특정 회원, brand 수정
     @Auth
     @PutMapping("/brand")
-    public ResponseEntity updateUser(
+    public ResponseEntity updateBrand(
             @RequestHeader("Authorization") final String header,
             @RequestBody final UserupdateReq userupdateReq) {
         try {

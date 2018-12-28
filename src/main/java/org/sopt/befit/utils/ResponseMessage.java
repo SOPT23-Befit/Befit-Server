@@ -7,6 +7,8 @@ public class ResponseMessage {
     public static final String INVALID_CREATED_USER = "회원 가입 정보가 잘못되었습니다.";
     public static final String INVALID_UPDATE_USER = "회원 수정 정보가 잘못되었습니다.";
     public static final String HAVE_NOT_UPDATE_USER = "회원 수정 정보가 없습니다.";
+    public static final String UPDATE_PASSWORD_USER = "회원 비밀번호 정보 수정 성공";
+    public static final String UPDATE_USER_CHECK = "비밀번호 정보 수정 회원 조회 성공";
     public static final String UPDATE_BRAND_USER = "회원 브랜드 정보 수정 성공";
     public static final String UPDATE_COMBINE_FROM_USER = "회원 통합 로그인 폼 정보 수정 성공";
     public static final String DELETE_USER = "회원 탈퇴 성공";

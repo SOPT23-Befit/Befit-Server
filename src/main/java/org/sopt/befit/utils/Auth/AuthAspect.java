@@ -44,7 +44,7 @@ public class AuthAspect {
         if(token == null){
             return RES_RESPONSE_ENTITY;
         }else{
-            final User user = userMapper.findByUserIdx(token.getUser_idx());
+            final User user = userMapper.findByUserIdx(token.getIdx());
             if(user == null) return  RES_RESPONSE_ENTITY;
             return pjp.proceed(pjp.getArgs());
         }

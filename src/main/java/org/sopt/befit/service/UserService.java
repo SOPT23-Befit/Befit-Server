@@ -5,6 +5,7 @@ import org.sopt.befit.dto.User;
 import org.sopt.befit.mapper.UserMapper;
 import org.sopt.befit.model.DefaultRes;
 import org.sopt.befit.model.SignUpReq;
+import org.sopt.befit.model.UserupdateReq;
 import org.sopt.befit.utils.ResponseMessage;
 import org.sopt.befit.utils.StatusCode;
 import org.springframework.stereotype.Service;
@@ -31,8 +32,15 @@ public class UserService {
         this.s3FileUploadService = s3fileUploadService;
     }
 
+    //befit index로 회원 조회 (O)
+    public DefaultRes findByIdx(final int userIdx){
+        final User user = userMapper.findByUserIdx(userIdx);
+        if(user == null)
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, user);
+    }
 
-   //모든회원 조회
+   //모든회원 조회 사용 X
     public DefaultRes getAllUsers() {
         final List<User> userList = userMapper.findAll();
         if (userList.isEmpty())
@@ -40,22 +48,36 @@ public class UserService {
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, userList);
     }
 
-    //이름으로 회원조회
-    public DefaultRes findByName(final String name) {
-        final User user = userMapper.findByName(name);
-        if (user == null)
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, user);
-    }
-
     //회원가입
     @Transactional
-    public DefaultRes save(SignUpReq signUpReq) {
+    public DefaultRes save(final SignUpReq signUpReq) {
+        //모든 항목이 있는지 검사
+        if (signUpReq.checkProperties()) {
+            final User user = userMapper.findByEmail(signUpReq.getEmail());
+            if (user == null) {
+                try {
+                    userMapper.save(signUpReq);
+                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+                }
+            } else return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ALREADY_USER);
+        }
+        return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.INVALID_CREATED_USER);
+    }
+
+    //회원정보 수정 (brand 수정)
+    @Transactional
+    public DefaultRes updateBrand(final UserupdateReq userupdateReq, final int userIdx) {
         try {
-            if(signUpReq.getProfile() != null)
-                signUpReq.setProfileUrl(s3FileUploadService.upload(signUpReq.getProfile()));
-            userMapper.save(signUpReq);
-            return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER);
+            log.info(userupdateReq.toString() + ">" + userupdateReq.is_brand());
+            if(userupdateReq.is_brand()){
+                userMapper.updateBrand(userupdateReq, userIdx);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.userNUM_message(userIdx, ResponseMessage.UPDATE_BRAND_USER));
+            }
+            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.INVALID_UPDATE_USER);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -64,18 +86,15 @@ public class UserService {
         }
     }
 
-    //회원정보 수정
     @Transactional
-    public DefaultRes update(final SignUpReq signUpReq, final int userIdx) {
-        User temp = userMapper.findByUserIdx(userIdx);
-        if (temp == null)
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+    public DefaultRes updateCombineForm(final UserupdateReq userupdateReq, final int userIdx) {
         try {
-            if (signUpReq.getName() != null) temp.setName(signUpReq.getName());
-            if (signUpReq.getPart() != null) temp.setPart(signUpReq.getPart());
-            if(signUpReq.getProfileUrl() != null) temp.setProfileUrl(signUpReq.getProfileUrl());
-            userMapper.update(userIdx, temp);
-            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.UPDATE_USER);
+            log.info(userupdateReq.toString() + ">" + userupdateReq.is_combineForm());
+            if(userupdateReq.is_combineForm()){
+                userMapper.updateCombineForm(userupdateReq, userIdx);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.userNUM_message(userIdx, ResponseMessage.UPDATE_COMBINE_FROM_USER));
+            }
+            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.INVALID_UPDATE_USER);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -88,12 +107,11 @@ public class UserService {
     @Transactional
     public DefaultRes deleteByUserIdx(final int userIdx) {
         final User user = userMapper.findByUserIdx(userIdx);
-        if (user == null)
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
-
         try {
+            if (user == null)
+                return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
             userMapper.deleteByUserIdx(userIdx);
-            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.DELETE_USER);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.userNUM_message(userIdx,ResponseMessage.DELETE_USER));
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

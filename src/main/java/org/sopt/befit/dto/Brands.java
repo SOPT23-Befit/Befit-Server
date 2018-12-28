@@ -9,7 +9,6 @@ import lombok.Data;
 public class Brands {
 
     private int idx;
-//    private int u_id;
     private String name_korean;
     private String name_english;
     private String gender;
@@ -17,5 +16,6 @@ public class Brands {
     private String style2;
     private String link;
     private String logo;
+    private double score;
     private int likeFlag;
 }

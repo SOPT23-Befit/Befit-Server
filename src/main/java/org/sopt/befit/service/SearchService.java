@@ -21,11 +21,12 @@ public class SearchService {
     }
 
     // 브랜드 이름으로 검색
-    public DefaultRes findBrandsByName(final String name) {
-        final List<Brands> brands= searchMapper.findBrandsByName(name);
-        if (brands == null)
+    public DefaultRes findBrandsByName(final int user_idx, final String name) {
+        final List<Brands> brandsList= searchMapper.findBrandsByName(user_idx, name);
+        if (brandsList.isEmpty())
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_BRAND);
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.FOUND_BRAND, brands);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_BRAND, brandsList);
     }
 
+    // 상품 이름으로 검색
 }

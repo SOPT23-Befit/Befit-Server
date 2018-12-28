@@ -13,14 +13,15 @@ public interface UserMapper {
     @Select("SELECT * FROM user")
     List<User> findAll();
 
-    //회원 이름으로 조회
-    @Select("SELECT * FROM user WHERE name = #{name}")
-    User findByName(@Param("name") final String name);
+    //회원 이메일로 조회 befit
+    @Select("SELECT * FROM user WHERE email = #{email}")
+    User findByEmail(@Param("email") final String email);
 
     //회원 고유 번호로 조회 befit
     @Select("SELECT * FROM user WHERE Idx = #{Idx}")
     User findByUserIdx(@Param("Idx") final int userIdx);
 
+    //이메일과 패스워드 같은지 확인 befit
     @Select("SELECT * FROM user WHERE email = #{email} AND password= #{password}")
     User findByEmailAndPassword(@Param("email") final String email, @Param("password") final String password);
 

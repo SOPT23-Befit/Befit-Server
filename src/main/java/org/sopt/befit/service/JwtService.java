@@ -13,6 +13,9 @@ import org.sopt.befit.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import static com.auth0.jwt.JWT.require;
 
 @Slf4j
@@ -32,11 +35,21 @@ public class JwtService {
             JWTCreator.Builder b = JWT.create();
             b.withIssuer(ISSUER);
             b.withClaim("idx", idx);
+            //만료 날짜 지정, 1달
+            b.withExpiresAt(expiresAt());
             return b.sign(Algorithm.HMAC256(SECRET));
         }catch (JWTCreationException jwtCreationException){
             log.info(jwtCreationException.getMessage());
         }
         return null;
+    }
+
+    private Date expiresAt(){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        //한달 : 24*31
+        cal.add(Calendar.HOUR, 744);
+        return cal.getTime();
     }
 
     //토큰 해독

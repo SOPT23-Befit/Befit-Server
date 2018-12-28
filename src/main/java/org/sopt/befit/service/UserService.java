@@ -40,7 +40,7 @@ public class UserService {
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, user);
     }
 
-   //모든회원 조회
+   //모든회원 조회 사용 X
     public DefaultRes getAllUsers() {
         final List<User> userList = userMapper.findAll();
         if (userList.isEmpty())
@@ -48,26 +48,24 @@ public class UserService {
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, userList);
     }
 
-    //이름으로 회원조회
-    public DefaultRes findByName(final String name) {
-        final User user = userMapper.findByName(name);
-        if (user == null)
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, user);
-    }
-
     //회원가입
     @Transactional
-    public DefaultRes save(SignUpReq signUpReq) {
-        try {
-            userMapper.save(signUpReq);
-            return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER);
-        } catch (Exception e) {
-            //Rollback
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            log.error(e.getMessage());
-            return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+    public DefaultRes save(final SignUpReq signUpReq) {
+        //모든 항목이 있는지 검사
+        if (signUpReq.checkProperties()) {
+            final User user = userMapper.findByEmail(signUpReq.getEmail());
+            if (user == null) {
+                try {
+                    userMapper.save(signUpReq);
+                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                    return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
+                }
+            } else return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ALREADY_USER);
         }
+        return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.INVALID_CREATED_USER);
     }
 
     //회원정보 수정 (brand 수정)
@@ -77,7 +75,7 @@ public class UserService {
             log.info(userupdateReq.toString() + ">" + userupdateReq.is_brand());
             if(userupdateReq.is_brand()){
                 userMapper.updateBrand(userupdateReq, userIdx);
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.userNUM_message(userIdx, ResponseMessage.UPDATE_BRAND_USER));
             }
             return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.INVALID_UPDATE_USER);
         } catch (Exception e) {
@@ -94,7 +92,7 @@ public class UserService {
             log.info(userupdateReq.toString() + ">" + userupdateReq.is_combineForm());
             if(userupdateReq.is_combineForm()){
                 userMapper.updateCombineForm(userupdateReq, userIdx);
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER);
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.userNUM_message(userIdx, ResponseMessage.UPDATE_COMBINE_FROM_USER));
             }
             return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.INVALID_UPDATE_USER);
         } catch (Exception e) {
@@ -113,7 +111,7 @@ public class UserService {
             if (user == null)
                 return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
             userMapper.deleteByUserIdx(userIdx);
-            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.DELETE_USER);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.userNUM_message(userIdx,ResponseMessage.DELETE_USER));
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

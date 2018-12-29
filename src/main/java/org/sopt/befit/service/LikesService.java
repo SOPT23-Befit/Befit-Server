@@ -38,6 +38,7 @@ public class LikesService {
             int isLike = likesMapper.isLike(user_idx, brand_idx);
             if(isLike == 0) {
                 likesMapper.postLikeBrand(user_idx, brand_idx);
+                likesMapper.updateLikeUp(brand_idx);
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.LIKE_SUCCCESS);
             }
             return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.LIKE_FAIL);
@@ -56,6 +57,7 @@ public class LikesService {
             int isLike = likesMapper.isLike(user_idx, brand_idx);
             if(isLike > 0) {
                 likesMapper.deleteLikeBrand(user_idx, brand_idx);
+                likesMapper.updateLikeDown(brand_idx);
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_CANCEL_SUCCCESS);
             }
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.LIKE_CANCEL_SUCCCESS);

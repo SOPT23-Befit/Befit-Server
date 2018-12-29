@@ -26,7 +26,7 @@ public class LoginController {
     @PostMapping("login")
     public ResponseEntity login(@RequestBody final LoginReq loginReq){
         try{
-            log.info(loginReq.toString());
+//            log.info(loginReq.getPassword());
             return new ResponseEntity<>(authService.login(loginReq), HttpStatus.OK);
         }catch (Exception e){
             log.error(e.getMessage());

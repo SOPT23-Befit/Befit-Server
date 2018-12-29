@@ -2,6 +2,7 @@ package org.sopt.befit.mapper;
 
 import org.apache.ibatis.annotations.*;
 import org.sopt.befit.dto.User;
+import org.sopt.befit.model.PasswordFind;
 import org.sopt.befit.model.SignUpReq;
 import org.sopt.befit.model.UserupdateReq;
 
@@ -17,6 +18,10 @@ public interface UserMapper {
     @Select("SELECT * FROM user WHERE email = #{email}")
     User findByEmail(@Param("email") final String email);
 
+    //회원 정보로 조회 befit (password 변경시 확인되는 정보)
+    @Select("SELECT * FROM user WHERE email = #{passwordFind.email} AND name = #{passwordFind.name} AND birthday = #{passwordFind.birthday}")
+    User findPasswordCheck(@Param("passwordFind") final PasswordFind passwordFind);
+
     //회원 고유 번호로 조회 befit
     @Select("SELECT * FROM user WHERE Idx = #{Idx}")
     User findByUserIdx(@Param("Idx") final int userIdx);
@@ -28,6 +33,10 @@ public interface UserMapper {
     //회원 가입 befit
     @Insert("INSERT INTO user(email, password, name, gender, brand1_idx, brand2_idx, birthday) VALUES(#{signUpReq.email}, #{signUpReq.password}, #{signUpReq.name}, #{signUpReq.gender}, #{signUpReq.brand1_idx}, #{signUpReq.brand2_idx}, #{signUpReq.birthday})")
     void save(@Param("signUpReq") final SignUpReq signUpReq);
+
+    //회원 정보 수정 password 수정 befit
+    @Update("UPDATE user SET password = #{passwordFind.password} WHERE idx = #{passwordFind.userIdx}")
+    void updatePassword(@Param("passwordFind") final PasswordFind passwordFind);
 
     //회원 정보 수정 brand 수정 befit
     @Update("UPDATE user SET brand1_idx = #{userupdateReq.brand1_idx}, brand2_idx = #{userupdateReq.brand2_idx} WHERE idx = #{idx}")

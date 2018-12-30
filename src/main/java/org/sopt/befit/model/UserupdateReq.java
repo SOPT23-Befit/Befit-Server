@@ -21,6 +21,5 @@ public class UserupdateReq {
     public boolean is_combineForm(){
         return(this.phone!=null && this.post_number!= null && this.home_address !=null && this.detail_address !=null); //combineForm 참조
     }
-
 }
 

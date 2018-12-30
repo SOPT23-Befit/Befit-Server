@@ -57,7 +57,7 @@ public class ProductsService
         }
         return products;
     }
-    
+
     //controller 관련 method (return : DefaultRes)
 
     public DefaultRes findAllProducts(final int curIdx){ //curIdx : 현재 접속한 유저의 idx
@@ -78,10 +78,12 @@ public class ProductsService
             Optional<Brands> brand = brandRepository.findById(product.getBrand_idx());
 
             ProductReq productReq = new ProductReq(product, brand.get().getName_korean(), brand.get().getName_english(), isLike);
-
             productReqList.add(productReq);
         }
 
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_PRODUCTS, products);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_PRODUCTS, productReqList);
     }
+
+
+
 }

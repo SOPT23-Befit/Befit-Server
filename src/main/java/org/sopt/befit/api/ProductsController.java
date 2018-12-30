@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.befit.model.DefaultRes;
 import org.sopt.befit.service.JwtService;
+import org.sopt.befit.service.ProductsService;
 import org.sopt.befit.utils.Auth.Auth;
 import org.sopt.befit.utils.ResponseMessage;
 import org.sopt.befit.utils.StatusCode;
@@ -22,8 +23,11 @@ public class ProductsController {
 
     final JwtService jwtService;
 
-    ProductsController(final JwtService jwtService){
+    final ProductsService productsService;
+
+    ProductsController(final JwtService jwtService, final ProductsService productsService){
         this.jwtService = jwtService;
+        this.productsService = productsService;
     }
 
     @Auth
@@ -31,7 +35,7 @@ public class ProductsController {
         try {
             if(header != null){
                 int curIdx = jwtService.decode(header).getIdx();
-
+                return new ResponseEntity(productsService.findAllProducts(curIdx), HttpStatus.OK);
             }
             return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.NOT_FOUND_USER), HttpStatus.OK);
         }catch (Exception e) {

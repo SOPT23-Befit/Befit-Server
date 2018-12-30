@@ -15,6 +15,7 @@ import javax.persistence.*;
 @Table(name = "brand")
 @Data
 public class Brands {
+
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private int idx;
@@ -24,8 +25,10 @@ public class Brands {
     private String gender;
     private String style1;
     private String style2;
+    private int like_score;
     private String link;
-    private String logo;
-    private double score;
+    private String logo_url;
+    private String mainpage_url;
+    private String mainfeed_url;
     private int likeFlag;
 }

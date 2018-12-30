@@ -36,6 +36,10 @@ public class ResponseMessage {
     public static final String INTERNAL_SERVER_ERROR = "서버 내부 에러";
     public static final String DB_ERROR = "데이터베이스 에러";
 
+    /* product */
+    public static final String READ_ALL_PRODUCTS = "상품 전체 조회 성공";
+
+
     public static String userNUM_message(final int useridx, final String message){
         return ("user_no : "+useridx + " " + message);
     }

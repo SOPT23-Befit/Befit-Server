@@ -44,7 +44,7 @@ public class UserController {
                 int curIdx = jwtService.decode(header).getIdx();
                 return new ResponseEntity<>(userService.findByIdx(curIdx), HttpStatus.OK);
             }
-            return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.NOT_CURRENT_USER), HttpStatus.OK);
+            return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.NOT_FOUND_USER), HttpStatus.OK);
         }catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -34,4 +34,18 @@ public interface LikesMapper {
     @Update("UPDATE brand SET score = score - 1 WHERE idx = #{brand_idx}")
     void updateLikeDown(@Param("brand_idx") final int brand_idx);
 
+
+    //product like 여부 확인 : 1이면 like, 0이면 unlike
+    @Select("SELECT COUNT(*) FROM like_product where user_idx = #{user_idx} and product_idx = #{product_idx}")
+    int isLikeProduct(@Param("user_idx") final int user_idx, @Param("product_idx") final int product_idx);
+
+
+    //product 좋아요
+    @Insert("INSERT INTO like_product(user_idx, product_idx) VALUES(#{user_idx}, #{product_idx})")
+    void InsertLikeProduct(@Param("user_idx") final int user_idx, @Param("product_idx") final int product_idx);
+
+    //product 좋아요 취소
+    @Delete("DELETE FROM like_product WHERE user_idx = #{user_idx} AND product_idx = #{product_idx}")
+    void DeleteLikeProduct(@Param("user_idx") final int user_idx, @Param("product_idx") final int product_idx);
+
 }

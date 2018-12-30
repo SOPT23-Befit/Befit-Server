@@ -1,24 +1,26 @@
-package org.sopt.befit.dto;
+package org.sopt.befit.domain;
+
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 
 @Entity
 
 @Table(name = "brand")
-@Data
-public class Brands {
+public class Brand_JPA {
+
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private int idx;
 
+    //column
     private String name_korean;
     private String name_english;
     private String gender;
@@ -28,4 +30,5 @@ public class Brands {
     private String logo;
     private double score;
     private int likeFlag;
+
 }

@@ -49,6 +49,12 @@ public class ResponseMessage {
 
     /* product */
     public static final String READ_ALL_PRODUCTS = "상품 전체 조회 성공";
+    public static final String READ_CATEGORY_PRODUCTS_NEW = "카테고리 상품 조회 신상순";
+    public static final String READ_CATEGORY_PRODUCTS_POPULAR = "카테고리 상품 조회 인기순";
+    public static final String READ_BRAND_PRODUCTS_NEW = "브랜드 상품 조회 신상순";
+    public static final String READ_BRAND_PRODUCTS_POPULAR = "브랜드 상품 조회 인기순";
+
+    public static final String NOT_READ_PRODUCTS = "상품 리스트 조회 실패";
 
 
     public static String userNUM_message(final int useridx, final String message){

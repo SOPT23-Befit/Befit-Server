@@ -13,7 +13,6 @@ public class UserupdateReq {
     private String home_address;
     private String detail_address;
 
-
     public boolean is_brand(){
         return(this.brand1_idx != 0 && this.brand2_idx !=0 ); //brand 참조
     }

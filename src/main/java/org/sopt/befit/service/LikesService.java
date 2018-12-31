@@ -50,7 +50,7 @@ public class LikesService {
         }
     }
 
-    // 브랜드 좋아요
+    // 브랜드 좋아요 취소
     @Transactional
     public DefaultRes deleteLikeBrand(final int user_idx, final int brand_idx) {
         try {
@@ -60,7 +60,7 @@ public class LikesService {
                 likesMapper.updateLikeDown(brand_idx);
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_CANCEL_SUCCCESS);
             }
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.LIKE_CANCEL_SUCCCESS);
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.LIKE_CANCEL_FAIL);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

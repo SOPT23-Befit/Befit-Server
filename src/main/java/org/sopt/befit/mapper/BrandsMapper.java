@@ -9,7 +9,6 @@ import java.util.List;
 
 @Mapper
 public interface BrandsMapper {
-
     // 모든 브랜드 조회 - 사용 안할 듯
     @Select("select b.*, (select count(*) from like_brand as lb where lb.user_idx = #{user_idx} and lb.brand_idx = b.idx) as likeFlag from brand as b")
     List<Brands> getBrands(@Param("user_idx") final int user_idx);
@@ -33,9 +32,10 @@ public interface BrandsMapper {
     List<Brands> getBrandsByGender(@Param("user_idx") final int user_idx,
                                    @Param("gender") final String gender);
 
-
+ 
     //특정 브랜드 정보 조회 (user_idx 관여 X)
     @Select("SELECT * FROM brand WHERE idx = #{brand_idx}")
     Brands getBrandsByIdx(@Param("brand_idx") final int brand_idx);
+
 
 }

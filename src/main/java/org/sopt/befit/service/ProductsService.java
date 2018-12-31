@@ -3,6 +3,7 @@ package org.sopt.befit.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+
 import org.sopt.befit.domain.Brand_JPA;
 import org.sopt.befit.dto.Brands;
 import org.sopt.befit.dto.Products;
@@ -14,6 +15,7 @@ import org.sopt.befit.model.ProductReq;
 import org.sopt.befit.repository.BrandRepository;
 import org.sopt.befit.utils.ResponseMessage;
 import org.sopt.befit.utils.StatusCode;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -88,6 +90,7 @@ public class ProductsService
 
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_PRODUCTS, productReqList);
     }
+
 
 
 

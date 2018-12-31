@@ -27,11 +27,11 @@ public interface LikesMapper {
     void deleteLikeBrand(@Param("user_idx") final int user_idx, @Param("brand_idx") final int brand_idx);
 
     // 브랜드 좋아요 갯수 1 증가
-    @Update("UPDATE brand SET score = score + 1 WHERE idx = #{brand_idx}")
+    @Update("UPDATE brand SET like_score = like_score + 1 WHERE idx = #{brand_idx}")
     void updateLikeUp(@Param("brand_idx") final int brand_idx);
 
     // 브랜드 좋아요 갯수 1 감소
-    @Update("UPDATE brand SET score = score - 1 WHERE idx = #{brand_idx}")
+    @Update("UPDATE brand SET like_score = like_score - 1 WHERE idx = #{brand_idx}")
     void updateLikeDown(@Param("brand_idx") final int brand_idx);
 
 

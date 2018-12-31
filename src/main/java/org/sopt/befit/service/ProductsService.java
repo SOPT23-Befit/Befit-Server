@@ -44,7 +44,7 @@ public class ProductsService
     }
 
     //mapper로 받은 measure의 string을 jsonNode로 변환
-    public JsonNode parseJson(String jsonString){
+    static public JsonNode parseJson(String jsonString){
         try{
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonObejct = mapper.readTree(jsonString);
@@ -56,7 +56,7 @@ public class ProductsService
         }
     }
 
-    public List<ProductReq> ListParse(List<ProductReq> productReqList){
+    static public List<ProductReq> ListParse(List<ProductReq> productReqList){
         for(ProductReq productReq: productReqList){
             productReq.setMeasure(parseJson(productReq.getMeasure().toString()));
         }

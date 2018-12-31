@@ -14,8 +14,8 @@ public class ProductReq {
     private String name;
     private String price;
     private String image_url;
-    private int product_category_idx;
-    private String brand_idx;
+    private int product_category_index;
+    private int brand_idx;
     private Date date;
     private String link;
     private Object measure;

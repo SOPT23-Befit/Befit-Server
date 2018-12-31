@@ -32,6 +32,9 @@ public class ResponseMessage {
     public static final String NO_LIKE_BRAND = "좋아요 한 브랜드가 없습니다.";
     public static final String READ_LIKE_BRAND = "좋아요 한 브랜드 조회 성공";
 
+    public static final String NO_LIKE_PRODUCT = "좋아요 한 상품이 없습니다.";
+    public static final String READ_LIKE_PRODUCT = "좋아요 한 상품 조회 성공";
+
     public static final String CLOSET_CREATE_SUCCESS = "옷장 아이템 등록 성공";
     public static final String CLOSET_CREATE_FAIL = "옷장 아이템 등록 실패";
     public static final String CLOSET_DELETE_SUCCESS = "옷장 아이템 등록 성공";

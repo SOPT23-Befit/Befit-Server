@@ -10,7 +10,7 @@ public class Products {
     private String name;
     private String price;
     private String image_url;
-    private int product_category_idx;
+    private int product_category_index;
     private int brand_idx;
     private String link;
     private Object measure;

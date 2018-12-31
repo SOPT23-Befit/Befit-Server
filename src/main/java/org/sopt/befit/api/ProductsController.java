@@ -73,7 +73,7 @@ public class ProductsController {
                             }
                         }
                 }
-                return new ResponseEntity(FAIL_DEFAULT_RES, HttpStatus.NOT_FOUND); //404 에러 url 맞지 않음 (type 틀리거나, sort 틀림) or category 인덱스 벗어남 or
+                return new ResponseEntity(new DefaultRes(StatusCode.NOT_FOUND, ResponseMessage.INVALID_PRODUCTS_READ), HttpStatus.NOT_FOUND); //404 에러 url 맞지 않음 (type 틀리거나, sort 틀림) or category 인덱스 벗어남 or
             }
             return new ResponseEntity(new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
         }catch (Exception e){

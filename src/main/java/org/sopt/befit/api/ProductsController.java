@@ -10,6 +10,7 @@ import org.sopt.befit.utils.ResponseMessage;
 import org.sopt.befit.utils.StatusCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +32,7 @@ public class ProductsController {
     }
 
     @Auth
+    @GetMapping("")
     public ResponseEntity findAllProducts(@RequestHeader("Authorization") final String header){
         try {
             if(header != null){

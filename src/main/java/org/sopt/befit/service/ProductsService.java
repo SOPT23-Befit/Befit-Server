@@ -3,8 +3,10 @@ package org.sopt.befit.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.sopt.befit.domain.Brand_JPA;
 import org.sopt.befit.dto.Brands;
 import org.sopt.befit.dto.Products;
+import org.sopt.befit.mapper.BrandsMapper;
 import org.sopt.befit.mapper.LikesMapper;
 import org.sopt.befit.mapper.ProductsMapper;
 import org.sopt.befit.model.DefaultRes;
@@ -28,12 +30,14 @@ public class ProductsService
 
     final LikesMapper likesMapper;
 
-    final BrandRepository brandRepository;
+//    final BrandRepository brandRepository;
 
-    ProductsService(final ProductsMapper productsMapper, final LikesMapper likesMapper, final BrandRepository brandRepository){
+    final BrandsMapper brandsMapper;
+
+    ProductsService(final ProductsMapper productsMapper, final LikesMapper likesMapper, final BrandsMapper brandsMapper){
         this.productsMapper = productsMapper;
         this.likesMapper = likesMapper;
-        this.brandRepository = brandRepository;
+        this.brandsMapper = brandsMapper;
     }
 
     //mapper로 받은 measure의 string을 jsonNode로 변환
@@ -61,10 +65,7 @@ public class ProductsService
     //controller 관련 method (return : DefaultRes)
 
     public DefaultRes findAllProducts(final int curIdx){ //curIdx : 현재 접속한 유저의 idx
-        //all list json parsing ok
-//        final List<Products> products = listParseJson(productsMapper.findAll());
 
-//        ProductReq productReq = new ProductReq();
         List<ProductReq> productReqList = new ArrayList<>();
 
         final List<Products> products = productsMapper.findAll();
@@ -75,10 +76,14 @@ public class ProductsService
 
             boolean isLike = (likesMapper.isLike(curIdx, product.getBrand_idx()) != 0); //int to bool : (i != 0)
 
-            Optional<Brands> brand = brandRepository.findById(product.getBrand_idx());
+//            Optional<Brand_JPA> brand = brandRepository.findById(product.getBrand_idx());
 
-            ProductReq productReq = new ProductReq(product, brand.get().getName_korean(), brand.get().getName_english(), isLike);
-            productReqList.add(productReq);
+            Brands brandItem = brandsMapper.getBrandsByIdx(product.getBrand_idx());
+            log.info("brand" + brandItem);
+
+            ProductReq reqItem = new ProductReq(product, brandItem.getName_korean(), brandItem.getName_english(), isLike);
+            log.info("ReqItem" + reqItem);
+            productReqList.add(reqItem);
         }
 
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_PRODUCTS, productReqList);

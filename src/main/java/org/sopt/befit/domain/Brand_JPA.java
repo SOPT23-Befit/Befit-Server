@@ -2,12 +2,14 @@ package org.sopt.befit.domain;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
 @Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 
@@ -21,6 +23,8 @@ public class Brand_JPA {
     private int idx;
 
     //column
+
+//    @Column()
     private String name_korean;
     private String name_english;
     private String gender;

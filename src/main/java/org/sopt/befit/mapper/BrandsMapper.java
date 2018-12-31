@@ -34,4 +34,8 @@ public interface BrandsMapper {
                                    @Param("gender") final String gender);
 
 
+    //특정 브랜드 정보 조회 (user_idx 관여 X)
+    @Select("SELECT * FROM brand WHERE idx = #{brand_idx}")
+    Brands getBrandsByIdx(@Param("brand_idx") final int brand_idx);
+
 }

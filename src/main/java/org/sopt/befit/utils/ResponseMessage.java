@@ -55,6 +55,7 @@ public class ResponseMessage {
     public static final String READ_BRAND_PRODUCTS_POPULAR = "브랜드 상품 조회 인기순";
 
     public static final String NOT_READ_PRODUCTS = "상품 리스트 조회 실패";
+    public static final String INVALID_PRODUCTS_READ = "잘못된 상품 리스트 조회 URL";
 
 
     public static String userNUM_message(final int useridx, final String message){

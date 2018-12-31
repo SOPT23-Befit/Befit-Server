@@ -45,23 +45,35 @@ public class ProductsController {
     }
 
     @Auth
-    @GetMapping("/{sort}/category/{category_idx}")
+    @GetMapping("/{sort}/{type}/{type_idx}")
     public ResponseEntity findProductsByCategory(@RequestHeader("Authorization") final String header,
                                                   @PathVariable(value="sort") final String sort,
-                                                  @PathVariable(value = "category_idx")final int category_idx){
+                                                  @PathVariable(value="type") final String type,
+                                                  @PathVariable(value = "type_idx")final int type_idx){
         try{
             if(header != null){
                 int curIdx = jwtService.decode(header).getIdx();
-                if(category_idx>=0 && category_idx<=15){
-                    //category 올바른지 확인
-                    switch (sort){ //sorting 방법
-                        case "new" :
-                            return new ResponseEntity(productsService.findCategoryProductsByNew(curIdx, category_idx), HttpStatus.OK);
-                        case "popular" :
-                            return new ResponseEntity(productsService.findCategoryProductsByPopular(curIdx, category_idx), HttpStatus.OK);
-                    }
+                switch (type){
+                    case "category":
+                        if(type_idx>=0 && type_idx<=15){//category 범위 올바른지 확인
+                            switch (sort){ //sorting 방법
+                                case "new" :
+                                    return new ResponseEntity(productsService.findCategoryProductsByNew(curIdx, type_idx), HttpStatus.OK);
+                                case "popular" :
+                                    return new ResponseEntity(productsService.findCategoryProductsByPopular(curIdx, type_idx), HttpStatus.OK);
+                            }
+                        }
+                    case "brand":
+                        if(type_idx>=1 && type_idx<=43){
+                            switch (sort){ //sorting 방법
+                                case "new" :
+                                    return new ResponseEntity(productsService.findBrandProductsByNew(curIdx, type_idx), HttpStatus.OK);
+                                case "popular" :
+                                    return new ResponseEntity(productsService.findBrandProductsByPopular(curIdx, type_idx), HttpStatus.OK);
+                            }
+                        }
                 }
-                return new ResponseEntity(FAIL_DEFAULT_RES, HttpStatus.NOT_FOUND); //404 에러 url 맞지 않음 or category 인덱스 벗어남
+                return new ResponseEntity(new DefaultRes(StatusCode.NOT_FOUND, ResponseMessage.INVALID_PRODUCTS_READ), HttpStatus.NOT_FOUND); //404 에러 url 맞지 않음 (type 틀리거나, sort 틀림) or category 인덱스 벗어남 or
             }
             return new ResponseEntity(new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
         }catch (Exception e){

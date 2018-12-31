@@ -100,6 +100,28 @@ public class ProductsService
         }
     }
 
+    //product의 brand 조회 신상품순
+    public DefaultRes findBrandProductsByNew(final int curIdx, final int brand_idx){
+        try{
+            List<ProductReq> result = ListParse( productsMapper.findByBrandNew(brand_idx, curIdx));
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_BRAND_PRODUCTS_NEW,  result);
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_READ_PRODUCTS);
+        }
+    }
+
+    //product의 brand 조회 인기순
+    public DefaultRes findBrandProductsByPopular(final int curIdx, final int brand_idx){
+        try{
+            List<ProductReq> result = ListParse( productsMapper.findByBrandPopular(brand_idx, curIdx));
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_BRAND_PRODUCTS_POPULAR, result);
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_READ_PRODUCTS);
+        }
+    }
+
 
 
 

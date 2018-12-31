@@ -45,28 +45,23 @@ public class ProductsController {
     }
 
     @Auth
-    @GetMapping("/{sort}")
+    @GetMapping("/{sort}/category/{category_idx}")
     public ResponseEntity findProductsByCategory(@RequestHeader("Authorization") final String header,
                                                   @PathVariable(value="sort") final String sort,
-                                                  @RequestParam(value = "category", defaultValue = "")final String category){
+                                                  @PathVariable(value = "category_idx")final int category_idx){
         try{
-
-
-
-
             if(header != null){
                 int curIdx = jwtService.decode(header).getIdx();
-                if(!category.equals("")){
+                if(category_idx>=0 && category_idx<=15){
                     //category 올바른지 확인
-
                     switch (sort){ //sorting 방법
                         case "new" :
-                            return new ResponseEntity(productsService.findCategoryProductsByNew(curIdx, category), HttpStatus.OK);
+                            return new ResponseEntity(productsService.findCategoryProductsByNew(curIdx, category_idx), HttpStatus.OK);
                         case "popular" :
-                            return new ResponseEntity(productsService.findCategoryProductsByPopular(curIdx, category), HttpStatus.OK);
+                            return new ResponseEntity(productsService.findCategoryProductsByPopular(curIdx, category_idx), HttpStatus.OK);
                     }
                 }
-                return new ResponseEntity(FAIL_DEFAULT_RES, HttpStatus.NOT_FOUND); //404 에러 url 맞지 않음 or category 올바르지 않음
+                return new ResponseEntity(FAIL_DEFAULT_RES, HttpStatus.NOT_FOUND); //404 에러 url 맞지 않음 or category 인덱스 벗어남
             }
             return new ResponseEntity(new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
         }catch (Exception e){

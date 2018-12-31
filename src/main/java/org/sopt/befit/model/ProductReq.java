@@ -2,18 +2,19 @@ package org.sopt.befit.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.sopt.befit.dto.Products;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ProductReq {
     private int idx;
     private String name;
     private String price;
     private String image_url;
-    private String product_category;
+    private int product_category_idx;
     private String brand_idx;
     private Date date;
     private String link;

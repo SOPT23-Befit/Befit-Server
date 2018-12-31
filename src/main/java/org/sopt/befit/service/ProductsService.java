@@ -58,7 +58,7 @@ public class ProductsService
 
     public List<ProductReq> ListParse(List<ProductReq> productReqList){
         for(ProductReq productReq: productReqList){
-            productReq.setMeasure(productReq.getMeasure().toString());
+            productReq.setMeasure(parseJson(productReq.getMeasure().toString()));
         }
         return productReqList;
     }
@@ -71,7 +71,7 @@ public class ProductsService
         try{
 
             List<ProductReq> result = ListParse( productsMapper.findAll(curIdx));
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_PRODUCTS,  result);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_PRODUCTS, result);
         }catch (Exception e){
             log.error(e.getMessage());
             return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_READ_PRODUCTS);
@@ -79,9 +79,8 @@ public class ProductsService
     }
 
     //product의 category조회 신상품순
-    public DefaultRes findCategoryProductsByNew(final int curIdx, final String category){
+    public DefaultRes findCategoryProductsByNew(final int curIdx, final int category){
         try{
-
             List<ProductReq> result = ListParse( productsMapper.findByCategoryNew(category, curIdx));
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CATEGORY_PRODUCTS_NEW,  result);
         }catch (Exception e){
@@ -91,9 +90,10 @@ public class ProductsService
     }
 
     //product의 category조회 인기순
-    public DefaultRes findCategoryProductsByPopular(final int curIdx, final String category){
+    public DefaultRes findCategoryProductsByPopular(final int curIdx, final int category){
         try{
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CATEGORY_PRODUCTS_POPULAR, productsMapper.findByCategoryPopular(category, curIdx));
+            List<ProductReq> result = ListParse( productsMapper.findByCategoryPopular(category, curIdx));
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CATEGORY_PRODUCTS_POPULAR, result);
         }catch (Exception e){
             log.error(e.getMessage());
             return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_READ_PRODUCTS);

@@ -10,12 +10,10 @@ import org.sopt.befit.utils.ResponseMessage;
 import org.sopt.befit.utils.StatusCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.sopt.befit.model.DefaultRes.FAIL_DEFAULT_RES;
+import static org.sopt.befit.model.DefaultRes.res;
 
 @Slf4j
 @RestController
@@ -39,12 +37,43 @@ public class ProductsController {
                 int curIdx = jwtService.decode(header).getIdx();
                 return new ResponseEntity(productsService.findAllProducts(curIdx), HttpStatus.OK);
             }
-            return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.NOT_FOUND_USER), HttpStatus.OK);
+            return new ResponseEntity(new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
         }catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    @Auth
+    @GetMapping("/{sort}")
+    public ResponseEntity findProductsByCategory(@RequestHeader("Authorization") final String header,
+                                                  @PathVariable(value="sort") final String sort,
+                                                  @RequestParam(value = "category", defaultValue = "")final String category){
+        try{
+
+
+
+
+            if(header != null){
+                int curIdx = jwtService.decode(header).getIdx();
+                if(!category.equals("")){
+                    //category 올바른지 확인
+
+                    switch (sort){ //sorting 방법
+                        case "new" :
+                            return new ResponseEntity(productsService.findCategoryProductsByNew(curIdx, category), HttpStatus.OK);
+                        case "popular" :
+                            return new ResponseEntity(productsService.findCategoryProductsByPopular(curIdx, category), HttpStatus.OK);
+                    }
+                }
+                return new ResponseEntity(FAIL_DEFAULT_RES, HttpStatus.NOT_FOUND); //404 에러 url 맞지 않음 or category 올바르지 않음
+            }
+            return new ResponseEntity(new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
 
 }

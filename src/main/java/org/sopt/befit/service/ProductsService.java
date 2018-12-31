@@ -19,6 +19,7 @@ import org.sopt.befit.utils.StatusCode;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,43 +56,53 @@ public class ProductsService
         }
     }
 
-
-    public List<Products> listParseJson(List<Products> products){
-        for(Products product: products){
-            JsonNode node = parseJson(product.getMeasure().toString());
-            product.setMeasure(node);
+    public List<ProductReq> ListParse(List<ProductReq> productReqList){
+        for(ProductReq productReq: productReqList){
+            productReq.setMeasure(productReq.getMeasure().toString());
         }
-        return products;
+        return productReqList;
     }
+
 
     //controller 관련 method (return : DefaultRes)
 
+
     public DefaultRes findAllProducts(final int curIdx){ //curIdx : 현재 접속한 유저의 idx
+        try{
 
-        List<ProductReq> productReqList = new ArrayList<>();
-
-        final List<Products> products = productsMapper.findAll();
-        for(Products product: products){
-
-            JsonNode node = parseJson(product.getMeasure().toString());
-            product.setMeasure(node);
-
-            boolean isLike = (likesMapper.isLike(curIdx, product.getBrand_idx()) != 0); //int to bool : (i != 0)
-
-//            Optional<Brand_JPA> brand = brandRepository.findById(product.getBrand_idx());
-
-            Brands brandItem = brandsMapper.getBrandsByIdx(product.getBrand_idx());
-            log.info("brand" + brandItem);
-
-            ProductReq reqItem = new ProductReq(product, brandItem.getName_korean(), brandItem.getName_english(), isLike);
-            log.info("ReqItem" + reqItem);
-            productReqList.add(reqItem);
+            List<ProductReq> result = ListParse( productsMapper.findAll(curIdx));
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_PRODUCTS,  result);
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_READ_PRODUCTS);
         }
+    }
 
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_ALL_PRODUCTS, productReqList);
+    //product의 category조회 신상품순
+    public DefaultRes findCategoryProductsByNew(final int curIdx, final String category){
+        try{
+
+            List<ProductReq> result = ListParse( productsMapper.findByCategoryNew(category, curIdx));
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CATEGORY_PRODUCTS_NEW,  result);
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_READ_PRODUCTS);
+        }
+    }
+
+    //product의 category조회 인기순
+    public DefaultRes findCategoryProductsByPopular(final int curIdx, final String category){
+        try{
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CATEGORY_PRODUCTS_POPULAR, productsMapper.findByCategoryPopular(category, curIdx));
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_READ_PRODUCTS);
+        }
     }
 
 
 
-    
+
+
+
 }

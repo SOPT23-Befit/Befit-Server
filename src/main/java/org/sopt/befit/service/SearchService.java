@@ -29,4 +29,6 @@ public class SearchService {
     }
 
     // 상품 이름으로 검색
+
+
 }

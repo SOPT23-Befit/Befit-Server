@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
-import org.sopt.befit.domain.Brand_JPA;
 import org.sopt.befit.dto.Brands;
 import org.sopt.befit.dto.Products;
 import org.sopt.befit.mapper.BrandsMapper;
@@ -12,7 +11,6 @@ import org.sopt.befit.mapper.LikesMapper;
 import org.sopt.befit.mapper.ProductsMapper;
 import org.sopt.befit.model.DefaultRes;
 import org.sopt.befit.model.ProductReq;
-import org.sopt.befit.repository.BrandRepository;
 import org.sopt.befit.utils.ResponseMessage;
 import org.sopt.befit.utils.StatusCode;
 

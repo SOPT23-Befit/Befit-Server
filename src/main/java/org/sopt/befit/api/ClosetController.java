@@ -90,7 +90,7 @@ public class ClosetController {
     @Auth
     @DeleteMapping("/{closet_idx}")
     public ResponseEntity deleteProductToCloset(@RequestHeader("Authorization") final String header,
-                                                @PathVariable(value = "closet_idx") final int closet_idx) {
+                                                @PathVariable(value = "closet_idx") final String  closet_idx) {
         try {
             if(header != null){
                 int curIdx = jwtService.decode(header).getIdx();
@@ -99,6 +99,25 @@ public class ClosetController {
             return new ResponseEntity<>(
                     new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
         }catch (Exception e){
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // 브랜드명, 카테고리로 상품검색
+    @Auth
+    @GetMapping("brands/{brand_idx}/category/{category_idx}")
+    public ResponseEntity getProductByBrandAndCategory(@RequestHeader("Authorization") final String header,
+                                                       @PathVariable(value = "brand_idx") final int brand_idx,
+                                                       @PathVariable(value = "category_idx") final int category_idx) {
+        try {
+            if(header != null)
+                return new ResponseEntity<>(closetService.getProductByBrandAndCategory(brand_idx, category_idx), HttpStatus.OK);
+
+            return new ResponseEntity<>(
+                    new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
+
+        }catch (Exception e) {
+            log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

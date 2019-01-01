@@ -2,6 +2,7 @@ package org.sopt.befit.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.befit.model.DefaultRes;
+import org.sopt.befit.model.SearchReq;
 import org.sopt.befit.service.JwtService;
 import org.sopt.befit.service.SearchService;
 import org.sopt.befit.utils.Auth.Auth;
@@ -30,18 +31,17 @@ public class SearchController {
     }
 
     // 브랜드 이름으로 검색 - u 라고만하면 'u'스펠링 있는거 전부 줘야하나?
-    //이니셜로 브랜드 리스트 검색
     @Auth
     @GetMapping("/brands")
     public ResponseEntity getBrandsByInitial(@RequestHeader("Authorization") final String header,
-                                             @RequestParam("name") final Optional<String> name) {
+                                             @RequestBody final SearchReq searchReq) {
         try {
             if(header != null){
                 int curIdx = jwtService.decode(header).getIdx();
-                if(name.isPresent()){
-                    String up_name = name.get().toUpperCase();
-                    return new ResponseEntity<>(searchService.findBrandsByName(curIdx, up_name), HttpStatus.OK);
-                }
+
+                if(searchReq!=null)
+                    return new ResponseEntity<>(searchService.findBrandsByName(curIdx, searchReq), HttpStatus.OK);
+//            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.OK);
                 return new ResponseEntity<>(
                         new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.INPUT_VALUE), HttpStatus.OK);
             }

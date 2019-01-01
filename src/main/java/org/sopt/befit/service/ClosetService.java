@@ -47,6 +47,13 @@ public class ClosetService {
         return closetListReqList;
     }
 
+    public List<Products> ListParseProduct(List<Products> closetListReqList){
+        for(Products closetReq: closetListReqList){
+            closetReq.setMeasure(parseJson(closetReq.getMeasure().toString()));
+        }
+        return closetListReqList;
+    }
+
     // 나의 옷장 리스트 조회
     public DefaultRes getClosetProduct(final int user_idx, final int category_idx) {
         final List<ClosetReq> brandsList = closetMapper.getClosetProduct(user_idx, category_idx);
@@ -76,7 +83,7 @@ public class ClosetService {
                 closetMapper.postClosetProduct(user_idx, closetReq);
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CLOSET_CREATE_SUCCESS);
             }
-            return DefaultRes.res(StatusCode.FORBIDDEN, ResponseMessage.CLOSET_CREATE_FAIL);
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.CLOSET_CREATE_FAIL);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -87,14 +94,23 @@ public class ClosetService {
 
     // 나의 옷장 아이템 삭제
     @Transactional
-    public DefaultRes deleteProductToCloset(final int user_idx, final int closet_idx) {
+    public DefaultRes deleteProductToCloset(final int user_idx, final String closet_idx) {
         try {
-            Closet closet = closetMapper.findByClosetIdx(closet_idx);
-            if(closet != null) {
-                closetMapper.deleteClosetPrduct(user_idx, closet_idx);
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.CLOSET_DELETE_SUCCESS);
+            int count_success = 0;
+            String resultMsg = "";
+            String[] idx = closet_idx.split(",");
+
+            for(int i=0; i<idx.length; ++i){
+                int nowIdx = Integer.parseInt(idx[i]);
+                Closet closet = closetMapper.findByClosetIdx(nowIdx);
+                if(closet != null) {
+                    closetMapper.deleteClosetPrduct(user_idx, nowIdx);
+                    count_success++;
+                }
             }
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUNT_CLOSET);
+            resultMsg += Integer.toString(count_success) + "개 아이템 삭제 성공";
+            return DefaultRes.res(StatusCode.OK, resultMsg);
+            //return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUNT_CLOSET);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -103,5 +119,15 @@ public class ClosetService {
         }
     }
 
+    // 브랜드명, 카테고리 조회
     // 나의 옷장 아이템과 나의 선택 상품 사이즈 비교
+    // 나의 옷장 리스트 조회
+    public DefaultRes getProductByBrandAndCategory(final int brand_idx, final int category_idx) {
+        final List<Products> productsList = closetMapper.getProductByBrandAndCategory(brand_idx, category_idx);
+        if (productsList.isEmpty())
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.CLOSET_SEARCH_PRODUCT_FAIL);
+
+        final List<Products> resultList = ListParseProduct(productsList);
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.CLOSET_SEARCH_PRODUCT_SUCCESS, resultList);
+    }
 }

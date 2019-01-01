@@ -32,10 +32,16 @@ public interface BrandsMapper {
     List<Brands> getBrandsByGender(@Param("user_idx") final int user_idx,
                                    @Param("gender") final String gender);
 
- 
+    // 랜덤한 브랜드 3개 조회
+    @Select("SELECT * FROM brand ORDER BY RAND() LIMIT 3")
+    List<Brands> getBrandsByRandomThree();
+
     //특정 브랜드 정보 조회 (user_idx 관여 X)
     @Select("SELECT * FROM brand WHERE idx = #{brand_idx}")
     Brands getBrandsByIdx(@Param("brand_idx") final int brand_idx);
 
+    // 해당 유저가 등록한 브랜드의 모든 스타일 조회
+    @Select("select group_concat(brand.style1,\",\",brand.style2 ) from brand, (select brand1_idx, brand2_idx from user where idx=#{user_idx}) as b where b.brand1_idx=brand.idx or b.brand2_idx=brand.idx;")
+    String getStylesByResisBrand(@Param("user_idx") final int user_idx);
 
 }

@@ -4,9 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.sopt.befit.dto.Brands;
 import org.sopt.befit.dto.User;
 import org.sopt.befit.mapper.BrandsMapper;
+import org.sopt.befit.mapper.ProductsMapper;
 import org.sopt.befit.mapper.UserMapper;
 import org.sopt.befit.model.BrandScore;
 import org.sopt.befit.model.DefaultRes;
+import org.sopt.befit.model.ProductReq;
 import org.sopt.befit.utils.ResponseMessage;
 import org.sopt.befit.utils.StatusCode;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,12 @@ public class BrandsService {
 
     private final BrandsMapper brandsMapper;
     private final UserMapper userMapper;
+    private final ProductsMapper productsMapper;
 
-    public BrandsService(BrandsMapper brandsMapper, UserMapper userMapper) {
+    public BrandsService(BrandsMapper brandsMapper, UserMapper userMapper, ProductsMapper productsMapper) {
         this.brandsMapper = brandsMapper;
         this.userMapper = userMapper;
+        this.productsMapper = productsMapper;
     }
 
     // 모든 브랜드 조회 - 이니셜 입력 안했을 경우
@@ -111,6 +115,42 @@ public class BrandsService {
 
         //Collections.sort(brandList, new CompareSeqDesc());
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_BRAND, brandList.subList(0, 10));
+    }
+
+    // 해당 유저의 선택 브랜드와 스타일이 동일한 모든 브랜드 조회
+    public List<String> getBrandsBySelectBrandStyle(final int user_idx) {
+        final User curUser = userMapper.findByUserIdx(user_idx);
+
+        final String stylesByResisBrand = brandsMapper.getStylesByResisBrand(user_idx);
+        String[] rawStyles = stylesByResisBrand.split(",");
+
+        List<String> resultStyles = new ArrayList<>();
+
+        for(String s : rawStyles) {
+            if (!resultStyles.contains(s)) {
+                resultStyles.add(s);
+            } else {
+                continue;
+            }
+        }
+
+        log.info(resultStyles.toString());
+
+        return resultStyles;
+    }
+
+    //해당 유저의 랜덤 3개 브랜드의 선호 점수가 가장 높은 세 개의 상품들 조회
+    public DefaultRes getProductsByThreeBrands(final int user_idx) {
+        final User curUser = userMapper.findByUserIdx(user_idx);
+
+        final List<Brands> randomThreeBrands = brandsMapper.getBrandsByRandomThree();
+
+        final List<ProductReq> getThreeProductsOnThreeBrands = new ArrayList<>();
+
+        for(Brands b : randomThreeBrands) {
+            getThreeProductsOnThreeBrands.addAll(productsMapper.getThreeProductByOneBrand(b.getIdx()));
+        }
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_THREE_TO_RANDOM_THREE_BRANDS_PRODUCTS, getThreeProductsOnThreeBrands);
     }
 
 //    // score 내림차순 정렬

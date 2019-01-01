@@ -2,6 +2,7 @@ package org.sopt.befit.mapper;
 
 import org.apache.ibatis.annotations.*;
 import org.sopt.befit.dto.Closet;
+import org.sopt.befit.dto.Products;
 import org.sopt.befit.model.ClosetReq;
 import org.sopt.befit.model.ClosetPostReq;
 
@@ -49,5 +50,11 @@ public interface ClosetMapper {
     ClosetReq getClosetProductInfo(@Param("user_idx") final int user_idx,
                                    @Param("closet_idx") final int closet_idx);
 
+    // 옷장 아이템 등록 시 상품 검색 - 브랜드명 + 카테고리
+    @Select("SELECT * FROM product WHERE brand_idx = #{brand_idx} and product_category_index = #{category_idx}")
+    List<Products> getProductByBrandAndCategory (@Param("brand_idx") final int brand_idx,
+                                           @Param("category_idx") final int category_idx);
+
     // 나의 옷장 아이템과 나의 선택 상품 사이즈 비교
+
 }

@@ -40,11 +40,16 @@ public class ResponseMessage {
     public static final String CLOSET_DELETE_SUCCESS = "옷장 아이템 등록 성공";
     public static final String CLOSET_DELETE_FAIL = "옷장 아이템 등록 실패";
     public static final String NOT_FOUNT_CLOSET = "옷장에 없는 아이템입니다.";
+    public static final String CLOSET_SEARCH_PRODUCT_FAIL = "상품이 없습니다.";
+    public static final String CLOSET_SEARCH_PRODUCT_SUCCESS = "상품 조회 성공.";
+
 
     public static final String CLOSET_READ_SUCCESS = "카테고리 별 옷장 리스트 조회 성공";
     public static final String CLOSET_READ_FAIL = "카테고리 별 옷장 리스트 조회 실패";
     public static final String NO_CLOSET_ITEM= "옷장에 아이템이 없습니다.";
 
+
+    public static final String BRADN_SEARCH_SUCCESS = "브랜드 검색 성공";
 
     public static final String INPUT_VALUE = "검색어를 입력하세요.";
     public static final String INTERNAL_SERVER_ERROR = "서버 내부 에러";

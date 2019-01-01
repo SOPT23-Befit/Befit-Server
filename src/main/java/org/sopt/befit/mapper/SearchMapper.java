@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.sopt.befit.dto.Brands;
+import org.sopt.befit.model.ProductReq;
 
 import java.util.List;
 
@@ -16,5 +17,24 @@ public interface SearchMapper {
             "or REPLACE(b.name_english , ' ', '') like CONCAT('%',#{name},'%'))")
     List<Brands> findBrandsByName(@Param("user_idx") final int user_idx,
                                     @Param("name") final String name);
+
+
+    // 상품 검색 신상순
+
+    @Select("SELECT (SELECT count(*) FROM like_product where product.idx=product_idx AND user_idx=#{user_idx}) AS is_liked, product.*, " +
+            "(SELECT name_korean FROM brand WHERE product.brand_idx = idx) AS brand_name " +
+            "FROM product WHERE REPLACE(name, ' ', '') LIKE CONCAT('%',#{name},'%') ORDER BY date DESC;")
+    List<ProductReq> findByProductByNameForNew(@Param("user_idx") final int user_idx, @Param("name") final String name);
+
+    // 상품 검색 인기순
+    @Select("SELECT (SELECT count(*) FROM like_product where product.idx=product_idx AND user_idx=#{user_idx}) AS is_liked, product.*, " +
+            "(SELECT name_korean FROM brand WHERE product.brand_idx = idx) AS brand_name " +
+            "FROM product WHERE REPLACE(name, ' ', '') LIKE CONCAT('%',#{name},'%') ORDER BY like_score DESC;")
+    List<ProductReq> findByProductByNameForPopular(@Param("user_idx") final int user_idx, @Param("name") final String name);
+
+    // 상품 검색 초기화면
+    // 24개 / 성별에 따라서 OK / 찜개수 /
+    // 100개 성별 필터림 찜개수 높은거 뽑고, 그중 상위 24개
+
 }
 

@@ -79,4 +79,58 @@ public class LikesController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    // 좋아요 한 상품 조회
+    @Auth
+    @GetMapping("/products")
+    public ResponseEntity getLikeProducts(@RequestHeader("Authorization") final String header) {
+        try {
+            if(header != null){
+                int curIdx = jwtService.decode(header).getIdx();
+                return new ResponseEntity<>(likesService.getLikeProductss(curIdx), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(
+                    new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
+
+        }catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    // 상품 좋아요
+    @Auth
+    @PostMapping("/products/{product_idx}")
+    public ResponseEntity postLIkeProduct(@RequestHeader("Authorization") final String header,
+                                        @PathVariable(value = "product_idx") final int product_idx) {
+        try {
+            if(header != null){
+                int curIdx = jwtService.decode(header).getIdx();
+                return new ResponseEntity<>(likesService.postLikeProduct(curIdx, product_idx), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(
+                    new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // 상품 좋아요 취소
+    @Auth
+    @DeleteMapping("/products/{products_idx}")
+    public ResponseEntity deleteLikeProduct(@RequestHeader("Authorization") final String header,
+                                          @PathVariable(value = "products_idx") final int products_idx) {
+        try {
+            if(header != null){
+                int curIdx = jwtService.decode(header).getIdx();
+                return new ResponseEntity<>(likesService.deleteLikeProduct(curIdx, products_idx), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(
+                    new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

@@ -32,16 +32,24 @@ public class ResponseMessage {
     public static final String NO_LIKE_BRAND = "좋아요 한 브랜드가 없습니다.";
     public static final String READ_LIKE_BRAND = "좋아요 한 브랜드 조회 성공";
 
+    public static final String NO_LIKE_PRODUCT = "좋아요 한 상품이 없습니다.";
+    public static final String READ_LIKE_PRODUCT = "좋아요 한 상품 조회 성공";
+
     public static final String CLOSET_CREATE_SUCCESS = "옷장 아이템 등록 성공";
     public static final String CLOSET_CREATE_FAIL = "옷장 아이템 등록 실패";
     public static final String CLOSET_DELETE_SUCCESS = "옷장 아이템 등록 성공";
     public static final String CLOSET_DELETE_FAIL = "옷장 아이템 등록 실패";
     public static final String NOT_FOUNT_CLOSET = "옷장에 없는 아이템입니다.";
+    public static final String CLOSET_SEARCH_PRODUCT_FAIL = "상품이 없습니다.";
+    public static final String CLOSET_SEARCH_PRODUCT_SUCCESS = "상품 조회 성공.";
+
 
     public static final String CLOSET_READ_SUCCESS = "카테고리 별 옷장 리스트 조회 성공";
     public static final String CLOSET_READ_FAIL = "카테고리 별 옷장 리스트 조회 실패";
     public static final String NO_CLOSET_ITEM= "옷장에 아이템이 없습니다.";
 
+
+    public static final String BRADN_SEARCH_SUCCESS = "브랜드 검색 성공";
 
     public static final String INPUT_VALUE = "검색어를 입력하세요.";
     public static final String INTERNAL_SERVER_ERROR = "서버 내부 에러";
@@ -55,6 +63,11 @@ public class ResponseMessage {
     public static final String READ_BRAND_PRODUCTS_POPULAR = "브랜드 상품 조회 인기순";
     public static final String READ_FOR_USER_REC_PRODUCTS = "특정 유저를 위한 상품 추천 리스트 조회 성공";
     public static final String READ_THREE_TO_RANDOM_THREE_BRANDS_PRODUCTS = "랜덤 3개 브랜드 별 인기 상품 리스트 조회 성공";
+
+    public static final String READ_SEARCH_PRODUCTS_NEW = "상품 검색 조회 신상순";
+    public static final String READ_SEARCH_PRODUCTS_POPULAR = "상품 검색 조회 인기순";
+
+    public static final String NOT_FOUND_PRODUCTS = "상품 검색 결과가 없습니다";
 
     public static final String NOT_READ_PRODUCTS = "상품 리스트 조회 실패";
     public static final String INVALID_PRODUCTS_READ = "잘못된 상품 리스트 조회 URL";

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
+import org.sopt.befit.dto.Brands;
+import org.sopt.befit.dto.Products;
 import org.sopt.befit.mapper.BrandsMapper;
 import org.sopt.befit.mapper.LikesMapper;
 import org.sopt.befit.mapper.ProductsMapper;
@@ -40,7 +42,7 @@ public class ProductsService
     }
 
     //mapper로 받은 measure의 string을 jsonNode로 변환
-    public JsonNode parseJson(String jsonString){
+    static public JsonNode parseJson(String jsonString){
         try{
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonObejct = mapper.readTree(jsonString);
@@ -52,7 +54,7 @@ public class ProductsService
         }
     }
 
-    public List<ProductReq> ListParse(List<ProductReq> productReqList){
+    static public List<ProductReq> ListParse(List<ProductReq> productReqList){
         for(ProductReq productReq: productReqList){
             productReq.setMeasure(parseJson(productReq.getMeasure().toString()));
         }

@@ -1,9 +1,9 @@
 package org.sopt.befit.api;
 
-import com.auth0.jwt.JWT;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.befit.model.DefaultRes;
 import org.sopt.befit.service.JwtService;
+import org.sopt.befit.service.BrandsService;
 import org.sopt.befit.service.ProductsService;
 import org.sopt.befit.utils.Auth.Auth;
 import org.sopt.befit.utils.ResponseMessage;
@@ -11,6 +11,8 @@ import org.sopt.befit.utils.StatusCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static org.sopt.befit.model.DefaultRes.FAIL_DEFAULT_RES;
 import static org.sopt.befit.model.DefaultRes.res;
@@ -21,11 +23,12 @@ import static org.sopt.befit.model.DefaultRes.res;
 public class ProductsController {
 
     final JwtService jwtService;
-
+    final BrandsService brandsService;
     final ProductsService productsService;
 
-    ProductsController(final JwtService jwtService, final ProductsService productsService){
+    ProductsController(final JwtService jwtService, final BrandsService brandsService, final ProductsService productsService){
         this.jwtService = jwtService;
+        this.brandsService = brandsService;
         this.productsService = productsService;
     }
 
@@ -81,6 +84,23 @@ public class ProductsController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    @Auth
+    @GetMapping("/forUserRec")
+    public ResponseEntity getForUserRecommandedProducts(@RequestHeader("Authorization") final String header) {
+        try {
+            if (header != null) {
+                int curIdx = jwtService.decode(header).getIdx();
+                List<String> getBrandsBySelectBrandStyle = brandsService.getBrandsBySelectBrandStyle(curIdx);
+
+                return new ResponseEntity<>( productsService.getProductByStyle(getBrandsBySelectBrandStyle), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

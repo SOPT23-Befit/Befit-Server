@@ -120,6 +120,54 @@ public class ProductsService
         }
     }
 
+    //특정 유저를 위한 상품 추천 리스트 조회
+    public DefaultRes getProductByStyle(final List<String> styles) {
+        try{
+            List<ProductReq> rawResult = new ArrayList<>();
+            List<ProductReq> result = new ArrayList<>();
+
+            List<Integer> limit_counts = new ArrayList<>();
+
+            if(styles.size() == 2) {
+                limit_counts.add(25);
+                limit_counts.add(25);
+            } else if (styles.size() == 3) {
+                limit_counts.add(20);
+                limit_counts.add(15);
+                limit_counts.add(15);
+            } else {
+                limit_counts.add(16);
+                limit_counts.add(16);
+                limit_counts.add(8);
+                limit_counts.add(8);
+            }
+
+            int i=0;
+
+            for(String s : styles) {
+                rawResult.addAll(productsMapper.getProductByStyle(s, limit_counts.get(i)));
+                i++;
+            }
+
+            log.info(Integer.toString(rawResult.size()));
+
+            for(ProductReq p : rawResult) {
+                if(!result.contains(p)) {
+                    result.add(p);
+                } else {
+                    continue;
+                }
+            }
+
+            log.info(Integer.toString(result.size()));
+
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_FOR_USER_REC_PRODUCTS, result);
+        }catch (Exception e) {
+            log.error(e.getMessage());
+            return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_READ_PRODUCTS);
+        }
+    }
+
 
 
 

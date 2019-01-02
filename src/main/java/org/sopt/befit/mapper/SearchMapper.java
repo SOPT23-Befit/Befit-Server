@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.sopt.befit.dto.Brands;
+import org.sopt.befit.dto.Products;
 import org.sopt.befit.model.ProductReq;
 
 import java.util.List;
@@ -35,5 +36,7 @@ public interface SearchMapper {
     // 24개 / 성별에 따라서 OK / 찜개수 /
     // 100개 성별 필터림 찜개수 높은거 뽑고, 그중 상위 24개
 
+    @Select("(SELECT * FROM product where brand_idx in (SELECT idx FROM brand WHERE gender = '공용' OR gender = #{gender}) ORDER BY RAND() DESC LIMIT 100) ORDER BY like_score DESC LIMIT 24;")
+    List<Products>  firstSearchPage(@Param("gender") final String gender);
 }
 

@@ -2,6 +2,7 @@ package org.sopt.befit.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.befit.dto.Products;
+import org.sopt.befit.dto.User;
 import org.sopt.befit.model.DefaultRes;
 import org.sopt.befit.model.SearchReq;
 import org.sopt.befit.service.JwtService;
@@ -93,6 +94,20 @@ public class SearchController {
     //24개 출력 / 성별에 따라서 옷 출력 (여자 : 여자 + 공용 / 남자 : 남자 + 공용) / 찜 개수로 상위판단
     //> 100개를 성별에 따라 필터링하기, random해서 24개 뽑기, 뽑힌 24개중에 찜개수 상위 24개 나열하기
 
+    @Auth
+    @GetMapping("/firstSearchPage")
+    public ResponseEntity getBrandsByInitial(@RequestHeader("Authorization") final String header) {
+        try{
 
+            if(header != null) {
+                int curIdx = jwtService.decode(header).getIdx();
+                return new ResponseEntity<>(searchService.fisrtSearchPage(curIdx), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

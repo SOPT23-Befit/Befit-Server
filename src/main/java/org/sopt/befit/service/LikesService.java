@@ -28,7 +28,7 @@ public class LikesService {
     public DefaultRes getLikeBrands(final int user_idx) {
         final List<Brands> brandsList = likesMapper.getLikeBrands(user_idx);
         if (brandsList.isEmpty())
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NO_LIKE_BRAND);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.NO_LIKE_BRAND);
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_LIKE_BRAND, brandsList);
     }
 
@@ -42,7 +42,7 @@ public class LikesService {
                 likesMapper.updateLikeUp(brand_idx);
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.LIKE_SUCCCESS);
             }
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.LIKE_FAIL);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_FAIL);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -61,7 +61,7 @@ public class LikesService {
                 likesMapper.updateLikeDown(brand_idx);
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_CANCEL_SUCCCESS);
             }
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.LIKE_CANCEL_FAIL);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_CANCEL_FAIL);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -74,7 +74,7 @@ public class LikesService {
     public DefaultRes getLikeProductss(final int user_idx) {
         final List<ProductReq> productReqList = ProductsService.ListParse(likesMapper.getLikeProducts(user_idx));
         if (productReqList.isEmpty())
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NO_LIKE_PRODUCT);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.NO_LIKE_PRODUCT);
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_LIKE_PRODUCT, productReqList);
     }
 
@@ -88,7 +88,7 @@ public class LikesService {
                 likesMapper.updateProductLikeUp(product_idx);
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.LIKE_SUCCCESS);
             }
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.LIKE_FAIL);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_FAIL);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -107,7 +107,7 @@ public class LikesService {
                 likesMapper.updateProductLikeDown(product_idx);
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_CANCEL_SUCCCESS);
             }
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.LIKE_CANCEL_FAIL);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_CANCEL_FAIL);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

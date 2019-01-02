@@ -153,13 +153,14 @@ public class ProductsService
 
             for(ProductReq p : rawResult) {
                 if(!result.contains(p)) {
+                    p.setMeasure(ProductsService.parseJson(p.getMeasure().toString()));
                     result.add(p);
                 } else {
                     continue;
                 }
             }
 
-            log.info(Integer.toString(result.size()));
+
 
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_FOR_USER_REC_PRODUCTS, result);
         }catch (Exception e) {

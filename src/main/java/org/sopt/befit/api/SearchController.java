@@ -55,21 +55,6 @@ public class SearchController {
         }
     }
 
-//    @GetMapping("/brands")
-//    public ResponseEntity getBrandsList(@RequestParam("name") final Optional<String> name) {
-//        try {
-////
-//            String up_name = name.get().toUpperCase();
-//            log.info(up_name);
-//            if(name.isPresent()) return new ResponseEntity<>(searchService.findBrandsByName(up_name), HttpStatus.OK);
-//            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.OK);
-//        }catch (Exception e) {
-//            log.error(e.getMessage());
-//            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-
-
     // 상품 이름으로 검색
     @Auth
     @GetMapping("/products/{type}")
@@ -102,5 +87,12 @@ public class SearchController {
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    //상품 검색 초기화면
+    //24개 출력 / 성별에 따라서 옷 출력 (여자 : 여자 + 공용 / 남자 : 남자 + 공용) / 찜 개수로 상위판단
+    //> 100개를 성별에 따라 필터링하기, random해서 24개 뽑기, 뽑힌 24개중에 찜개수 상위 24개 나열하기
+
+
 
 }

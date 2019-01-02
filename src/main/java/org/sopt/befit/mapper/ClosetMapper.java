@@ -26,7 +26,7 @@ public interface ClosetMapper {
     @Delete("DELETE FROM user_closet where idx = #{closet_idx}")
     void deleteClosetPrduct(@Param("user_idx") final int user_idx, @Param("closet_idx") final int closet_idx);
 
-    // 옷장 idx로 아이템 조회
+    // 옷장 idx로 아이템 조회 - 삭제 할 때 있는지 확인
     @Select("SELECT * FROM user_closet WHERE idx = #{closet_idx}")
     Closet findByClosetIdx(@Param("closet_idx") final int closet_idx);
 
@@ -51,7 +51,8 @@ public interface ClosetMapper {
                                    @Param("closet_idx") final int closet_idx);
 
     // 옷장 아이템 등록 시 상품 검색 - 브랜드명 + 카테고리
-    @Select("SELECT * FROM product WHERE brand_idx = #{brand_idx} and product_category_index = #{category_idx}")
+    @Select("SELECT * FROM product WHERE brand_idx = #{brand_idx} and product_category_index = #{category_idx} " +
+            "order by product.name desc")
     List<Products> getProductByBrandAndCategory (@Param("brand_idx") final int brand_idx,
                                            @Param("category_idx") final int category_idx);
 

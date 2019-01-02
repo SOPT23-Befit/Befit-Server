@@ -58,7 +58,7 @@ public class ClosetService {
     public DefaultRes getClosetProduct(final int user_idx, final int category_idx) {
         final List<ClosetReq> brandsList = closetMapper.getClosetProduct(user_idx, category_idx);
         if (brandsList.isEmpty())
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NO_CLOSET_ITEM);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.NO_CLOSET_ITEM);
 
         final List<ClosetReq> resultList = ListParse(brandsList);
         return DefaultRes.res(StatusCode.OK, ResponseMessage.CLOSET_READ_SUCCESS, resultList);
@@ -68,7 +68,7 @@ public class ClosetService {
     public DefaultRes getClosetProductInfo(final int user_idx, final int closet_idx) {
         final ClosetReq closetReq = closetMapper.getClosetProductInfo(user_idx, closet_idx);
         if (closetReq == null)
-            return DefaultRes.res(StatusCode.NOT_FOUND, "closet_idx : {" + closet_idx + "} 옷장 아이템 정보 조회 실패");
+            return DefaultRes.res(StatusCode.OK, "closet_idx : {" + closet_idx + "} 옷장 아이템 정보 조회 실패");
 
         closetReq.setMeasure(parseJson(closetReq.getMeasure().toString()).get(closetReq.getProduct_size()));
         return DefaultRes.res(StatusCode.OK, "closet_idx : {" + closet_idx + "} 옷장 아이템 조회 성공", closetReq);
@@ -83,7 +83,7 @@ public class ClosetService {
                 closetMapper.postClosetProduct(user_idx, closetReq);
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CLOSET_CREATE_SUCCESS);
             }
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.CLOSET_CREATE_FAIL);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.CLOSET_CREATE_FAIL);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -125,7 +125,7 @@ public class ClosetService {
     public DefaultRes getProductByBrandAndCategory(final int brand_idx, final int category_idx) {
         final List<Products> productsList = closetMapper.getProductByBrandAndCategory(brand_idx, category_idx);
         if (productsList.isEmpty())
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.CLOSET_SEARCH_PRODUCT_FAIL);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.CLOSET_SEARCH_PRODUCT_FAIL);
 
         final List<Products> resultList = ListParseProduct(productsList);
         return DefaultRes.res(StatusCode.OK, ResponseMessage.CLOSET_SEARCH_PRODUCT_SUCCESS, resultList);

@@ -37,8 +37,8 @@ public class ResponseMessage {
 
     public static final String CLOSET_CREATE_SUCCESS = "옷장 아이템 등록 성공";
     public static final String CLOSET_CREATE_FAIL = "옷장 아이템 등록 실패";
-    public static final String CLOSET_DELETE_SUCCESS = "옷장 아이템 등록 성공";
-    public static final String CLOSET_DELETE_FAIL = "옷장 아이템 등록 실패";
+    public static final String CLOSET_DELETE_SUCCESS = "옷장 아이템 삭제 성공";
+    public static final String CLOSET_DELETE_FAIL = "옷장 아이템 삭제 실패";
     public static final String NOT_FOUNT_CLOSET = "옷장에 없는 아이템입니다.";
     public static final String CLOSET_SEARCH_PRODUCT_FAIL = "상품이 없습니다.";
     public static final String CLOSET_SEARCH_PRODUCT_SUCCESS = "상품 조회 성공.";

@@ -29,7 +29,7 @@ public class SearchService {
         log.info(searchReq.getName());
         final List<Brands> brandsList= searchMapper.findBrandsByName(user_idx, searchReq.getName());
         if (brandsList.isEmpty())
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_BRAND);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_BRAND);
         return DefaultRes.res(StatusCode.OK, ResponseMessage.BRADN_SEARCH_SUCCESS, brandsList);
     }
 

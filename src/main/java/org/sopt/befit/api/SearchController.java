@@ -35,13 +35,13 @@ public class SearchController {
     @Auth
     @GetMapping("/brands")
     public ResponseEntity getBrandsByInitial(@RequestHeader("Authorization") final String header,
-                                             @RequestBody final SearchReq searchReq) {
+                                             @RequestParam("name") final String name) {
         try {
             if(header != null){
                 int curIdx = jwtService.decode(header).getIdx();
 
-                if(searchReq!=null)
-                    return new ResponseEntity<>(searchService.findBrandsByName(curIdx, searchReq), HttpStatus.OK);
+                if(!name.equals(""))
+                    return new ResponseEntity<>(searchService.findBrandsByName(curIdx, name), HttpStatus.OK);
 //            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.OK);
                 return new ResponseEntity<>(
                         new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.INPUT_VALUE), HttpStatus.OK);
@@ -74,19 +74,19 @@ public class SearchController {
     @Auth
     @GetMapping("/products/{type}")
     public ResponseEntity getBrandsByInitial(@RequestHeader("Authorization") final String header,
-                                             @RequestBody final SearchReq searchReq,
+                                             @RequestParam("name") final String name,
                                              @PathVariable(value="type") final String type) {
         try {
             if(header != null){
                 int curIdx = jwtService.decode(header).getIdx();
-                if(!searchReq.getName().isEmpty()){
+                if(!name.equals("")){
                     //upper string 처리
                     switch (type){
                         case "new":
-                            return new ResponseEntity(searchService.findPrdocutsByNameForNew(curIdx,searchReq.getName().replaceAll(" ", "")), HttpStatus.OK);
+                            return new ResponseEntity(searchService.findPrdocutsByNameForNew(curIdx,name.replaceAll(" ", "")), HttpStatus.OK);
 
                         case "popular":
-                            return new ResponseEntity<>(searchService.findPrdocutsByNameForPopular(curIdx,searchReq.getName().replaceAll(" ", "")), HttpStatus.OK);
+                            return new ResponseEntity<>(searchService.findPrdocutsByNameForPopular(curIdx,name.replaceAll(" ", "")), HttpStatus.OK);
 
                     }
                     return new ResponseEntity(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.INVALID_PRODUCTS_READ), HttpStatus.OK);

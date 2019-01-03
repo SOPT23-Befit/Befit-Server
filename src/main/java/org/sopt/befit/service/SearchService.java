@@ -23,11 +23,11 @@ public class SearchService {
     }
 
     // 브랜드 이름으로 검색
-    public DefaultRes findBrandsByName(final int user_idx, final SearchReq searchReq) {
-        searchReq.setName(searchReq.getName().replace(" ", "").toUpperCase());
+    public DefaultRes findBrandsByName(final int user_idx, final String name) {
+        String brand_name = name.replace(" ", "").toUpperCase();
 
-        log.info(searchReq.getName());
-        final List<Brands> brandsList= searchMapper.findBrandsByName(user_idx, searchReq.getName());
+        log.info(brand_name);
+        final List<Brands> brandsList= searchMapper.findBrandsByName(user_idx, brand_name);
         if (brandsList.isEmpty())
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_BRAND);
         return DefaultRes.res(StatusCode.OK, ResponseMessage.BRADN_SEARCH_SUCCESS, brandsList);

@@ -44,6 +44,7 @@ public class BrandsController {
     public ResponseEntity getBrandsByInitial(@RequestHeader("Authorization") final String header,
                                              @RequestParam("initial") final Optional<Character> initial) {
         try {
+            log.info(initial.toString());
             if(header != null){
                 int curIdx = jwtService.decode(header).getIdx();
                 if(initial.isPresent())

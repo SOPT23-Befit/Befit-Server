@@ -20,6 +20,13 @@ public interface BrandsMapper {
     List<Brands> getBrandsByInitial(@Param("user_idx") final int user_idx,
                                     @Param("initial") final char initial);
 
+    // 이니셜로 브랜드 조회 ect
+    @Select("select b.*, (select count(*) from like_brand as lb where lb.user_idx = #{user_idx} and lb.brand_idx = b.idx) as likeFlag " +
+            "from user as u, brand as b where u.idx = #{user_idx} and b.name_english REGEXP '^[^A-Z]' " +
+            "order by b.name_english ASC")
+    List<Brands> getBrandsEct(@Param("user_idx") final int user_idx,
+                                    @Param("initial") final char initial);
+
     //특정 브랜드 정보 조회 (user_idx 관여)
     @Select("select b.*, (select count(*) from like_brand as lb where lb.user_idx = #{user_idx} and lb.brand_idx = #{brand_idx}) as likeFlag from brand as b where b.idx = #{brand_idx}")
     Brands getBrandInfo(@Param("user_idx") final int user_idx,

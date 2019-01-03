@@ -43,6 +43,8 @@ public class ResponseMessage {
     public static final String CLOSET_SEARCH_PRODUCT_FAIL = "상품이 없습니다.";
     public static final String CLOSET_SEARCH_PRODUCT_SUCCESS = "상품 조회 성공.";
 
+    public static final String PRODUCT_COMPARE_SUCCESS = "옷 사이즈 비교 성공";
+    public static final String PRODUCT_COMPARE_FAIL = "옷 사이즈 비교 불가능";
 
     public static final String CLOSET_READ_SUCCESS = "카테고리 별 옷장 리스트 조회 성공";
     public static final String CLOSET_READ_FAIL = "카테고리 별 옷장 리스트 조회 실패";

@@ -123,4 +123,30 @@ public class ClosetController {
     }
 
     // 나의 옷장 아이템과 나의 선택 상품 사이즈 비교
+    @Auth
+    @GetMapping("/{closet_idx}/compare/{product_idx}")
+    public ResponseEntity compareProduct(@RequestHeader("Authorization") final String header,
+                                         @PathVariable(value = "closet_idx") final int closet_idx,
+                                         @PathVariable(value = "product_idx") final int product_idx,
+                                         @RequestParam("product_size") final String product_size) {
+        try {
+            if(product_size!=null){
+                if(header != null){
+                    int curIdx = jwtService.decode(header).getIdx();
+                    log.info(product_size);
+                  //  String p_size = product_size.replaceAll("%20" , "");
+                    //log.info(p_size);
+
+                    return new ResponseEntity(closetService.compareProduct(curIdx , closet_idx, product_idx, product_size), HttpStatus.OK);
+                }
+                return new ResponseEntity(new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.NOT_FOUNT_CLOSET), HttpStatus.OK);
+        }catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }

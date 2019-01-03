@@ -5,6 +5,8 @@ import org.sopt.befit.dto.Closet;
 import org.sopt.befit.dto.Products;
 import org.sopt.befit.model.ClosetReq;
 import org.sopt.befit.model.ClosetPostReq;
+import org.sopt.befit.model.SizeCompareReq;
+import org.sopt.befit.model.sizeCompareLink;
 
 import java.util.List;
 
@@ -57,5 +59,13 @@ public interface ClosetMapper {
                                            @Param("category_idx") final int category_idx);
 
     // 나의 옷장 아이템과 나의 선택 상품 사이즈 비교
+    @Select("select p.product_category_index, p.measure, uc.product_size from user_closet as uc, product as p where uc.idx = #{closet_idx} and p.idx = uc.product_idx")
+    SizeCompareReq getCompareMyProduct (@Param("user_idx") final int user_idx,
+                                        @Param("closet_idx") final int closet_idx);
 
+    @Select("select * from product as p where p.idx = #{product_idx}")
+    SizeCompareReq getCompareOtherProduct (@Param("product_idx") final int product_idx);
+
+    @Select("select my as my_url, ${column} as compare_url from compare_image where product_category_idx = #{category_idx}")
+    sizeCompareLink getLink (@Param("column") final String column, @Param("category_idx") final int category_idx);
 }

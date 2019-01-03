@@ -19,9 +19,9 @@ public class MeasureConvert {
             };
     private static String values[][] =
             {
-                    {"총장", "어깨 너비", "가슴 단면", "소매 길이"},
-                    {"총장", "허리 단면", "허벅지 단면", "밑위", "밑단 단면"},
-                    {"총장", "허리 단면", "밑단 단면"}
+                    {"총장", "가슴단면", "소매길이", "어깨너비"},
+                    {"총장", "허리단면", "허벅지단면", "밑위", "밑단단면"},
+                    {"총장", "허리단면", "밑단단면"}
             };
     private static HashMap<Integer, String[]> map = new HashMap<Integer, String[]>();
 

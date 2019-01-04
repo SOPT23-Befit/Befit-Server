@@ -109,7 +109,7 @@ public class UserController {
                     int curIdx = jwtService.decode(header).getIdx();
                     return new ResponseEntity(userService.updateBrand(userupdateReq , curIdx), HttpStatus.OK);
                 }
-                return new ResponseEntity(new DefaultRes(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER), HttpStatus.OK);
+                return new ResponseEntity(new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
             }
             return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.HAVE_NOT_UPDATE_USER), HttpStatus.OK);
         }catch (Exception e) {
@@ -124,15 +124,15 @@ public class UserController {
     public ResponseEntity updateCombineForm(@RequestHeader("Authorization") final String header,
                                             @RequestBody final UserupdateReq userupdateReq){
         try {
-            if(userupdateReq!=null){
+                log.info(userupdateReq.toString());
 //                log.info(userupdateReq.toString());
                 if(header!=null){
                     int curIdx = jwtService.decode(header).getIdx();
                     return new ResponseEntity(userService.updateCombineForm(userupdateReq, curIdx), HttpStatus.OK);
                 }
-                return new ResponseEntity(new DefaultRes(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER), HttpStatus.OK);
-            }
-            return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.HAVE_NOT_UPDATE_USER), HttpStatus.OK);
+                return new ResponseEntity(new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
+
+
         }catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -147,7 +147,7 @@ public class UserController {
                 int curIdx = jwtService.decode(header).getIdx();
                 return new ResponseEntity<>(userService.deleteByUserIdx(curIdx), HttpStatus.OK);
             }
-            return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.NOT_FOUND_USER), HttpStatus.OK);
+            return new ResponseEntity(new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
         }catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -123,12 +123,21 @@ public class UserService {
     @Transactional
     public DefaultRes updateCombineForm(final UserupdateReq userupdateReq, final int userIdx) {
         try {
-            log.info(userupdateReq.toString() + ">" + userupdateReq.is_combineForm());
-            if(userupdateReq.is_combineForm()){
-                userMapper.updateCombineForm(userupdateReq, userIdx);
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.userNUM_message(userIdx, ResponseMessage.UPDATE_COMBINE_FROM_USER));
+            log.info(userupdateReq.toString());
+            User updateUser = userMapper.findByUserIdx(userIdx);
+            if(userupdateReq.getDetail_address()!=null){
+                updateUser.setDetail_address(userupdateReq.getDetail_address());
             }
-            return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.INVALID_UPDATE_USER);
+            if(userupdateReq.getPost_number()!=null && userupdateReq.getHome_address()!=null) {
+                updateUser.setPost_number(userupdateReq.getPost_number());
+                updateUser.setHome_address(userupdateReq.getHome_address());
+            }
+            if(userupdateReq.getPhone() != null){
+                updateUser.setPhone(userupdateReq.getPhone());
+            }
+            userMapper.updateCombineForm(updateUser, userIdx);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.userNUM_message(userIdx, ResponseMessage.UPDATE_COMBINE_FROM_USER));
+
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

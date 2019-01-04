@@ -44,7 +44,7 @@ public interface UserMapper {
 
     //회원 정보 수정 통합회원가입 폼 수정 befit
     @Update("UPDATE user SET phone = #{userupdateReq.phone}, post_number = #{userupdateReq.post_number}, home_address = #{userupdateReq.home_address}, detail_address = #{userupdateReq.detail_address}  WHERE idx = #{idx}")
-    void updateCombineForm(@Param("userupdateReq") final UserupdateReq userupdateReq, @Param("idx") final int idx);
+    void updateCombineForm(@Param("userupdateReq") final User userupdateReq, @Param("idx") final int idx);
 
     //회원 삭제
     @Delete("DELETE FROM user where idx = #{idx}")

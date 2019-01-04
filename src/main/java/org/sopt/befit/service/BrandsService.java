@@ -40,7 +40,13 @@ public class BrandsService {
 
     // 이니셜로 브랜드 조회
     public DefaultRes getBrandsByInitial(final int user_idx, final Character initial) {
-        final List<Brands> brandsList = brandsMapper.getBrandsByInitial(user_idx, initial);
+        List<Brands> brandsList = null;
+        if(initial == '*'){
+            brandsList = brandsMapper.getBrandsEct(user_idx, initial);
+        }
+        else {
+            brandsList = brandsMapper.getBrandsByInitial(user_idx, initial);
+        }
         if (brandsList.isEmpty())
             return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_BRAND);
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_BRAND, brandsList);

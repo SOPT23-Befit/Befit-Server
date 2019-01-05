@@ -160,18 +160,10 @@ public class ProductsService
                 }
             }
 
-
-
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_FOR_USER_REC_PRODUCTS, result);
         }catch (Exception e) {
             log.error(e.getMessage());
             return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_READ_PRODUCTS);
         }
     }
-
-
-
-
-
-
 }

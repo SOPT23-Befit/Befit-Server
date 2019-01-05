@@ -28,7 +28,8 @@ public class ResponseMessage {
     public static final String LIKE_FAIL = "좋아요 실패";
     public static final String LIKE_CANCEL_SUCCCESS = "좋아요 취소 성공";
     public static final String LIKE_CANCEL_FAIL = "좋아요 취소 실패";
-
+    public static final String ALREADY_LIKE = "이미 좋아요 한 브랜드입니다.";
+    public static final String NOT_LIKE = "좋아요 한 브랜드가 아닙니다.";
     public static final String NO_LIKE_BRAND = "좋아요 한 브랜드가 없습니다.";
     public static final String READ_LIKE_BRAND = "좋아요 한 브랜드 조회 성공";
 

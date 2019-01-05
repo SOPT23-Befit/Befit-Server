@@ -3,6 +3,7 @@ package org.sopt.befit.service;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.befit.dto.Brands;
 import org.sopt.befit.dto.Likes;
+import org.sopt.befit.mapper.BrandsMapper;
 import org.sopt.befit.mapper.LikesMapper;
 import org.sopt.befit.model.DefaultRes;
 import org.sopt.befit.model.ProductReq;
@@ -18,9 +19,11 @@ import java.util.List;
 @Service
 public class LikesService {
 
+    private final BrandsMapper brandsMapper;
     private final LikesMapper likesMapper;
 
-    public LikesService(LikesMapper likesMapper) {
+    public LikesService(BrandsMapper brandsMapper, LikesMapper likesMapper) {
+        this.brandsMapper = brandsMapper;
         this.likesMapper = likesMapper;
     }
 
@@ -39,13 +42,20 @@ public class LikesService {
     @Transactional
     public DefaultRes postLikeBrand(final int user_idx, final int brand_idx) {
         try {
-            int isLike = likesMapper.isLike(user_idx, brand_idx);
-            if(isLike == 0) {
-                likesMapper.postLikeBrand(user_idx, brand_idx);
-                likesMapper.updateLikeUp(brand_idx);
-                return DefaultRes.res(StatusCode.CREATED, ResponseMessage.LIKE_SUCCCESS);
+
+            Brands brands = brandsMapper.getBrandInfo(user_idx, brand_idx);
+            if(brands != null){
+                int isLike = likesMapper.isLike(user_idx, brand_idx);
+                if(isLike == 0) {
+                    likesMapper.postLikeBrand(user_idx, brand_idx);
+                    likesMapper.updateLikeUp(brand_idx);
+                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.LIKE_SUCCCESS);
+                }
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.ALREADY_LIKE);
             }
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_FAIL);
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_BRAND);
+
+
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -58,13 +68,18 @@ public class LikesService {
     @Transactional
     public DefaultRes deleteLikeBrand(final int user_idx, final int brand_idx) {
         try {
-            int isLike = likesMapper.isLike(user_idx, brand_idx);
-            if(isLike > 0) {
-                likesMapper.deleteLikeBrand(user_idx, brand_idx);
-                likesMapper.updateLikeDown(brand_idx);
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_CANCEL_SUCCCESS);
+
+            Brands brands = brandsMapper.getBrandInfo(user_idx, brand_idx);
+            if(brands != null){
+                int isLike = likesMapper.isLike(user_idx, brand_idx);
+                if(isLike > 0) {
+                    likesMapper.deleteLikeBrand(user_idx, brand_idx);
+                    likesMapper.updateLikeDown(brand_idx);
+                    return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_CANCEL_SUCCCESS);
+                }
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_LIKE);
             }
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_CANCEL_FAIL);
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_BRAND);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

@@ -21,14 +21,15 @@ public class ResponseMessage {
     public static final String CURRENT_USER = "접근한 유저와 토큰의 유저가 같다.";
     public static final String NOT_CURRENT_USER = "접근한 유저와 토큰의 유저가 다르다.";
 
-    public static final String NOT_FOUND_BRAND = "브랜드 조회 실패";
+    public static final String NOT_FOUND_BRAND = "브랜드가 없습니다.";
     public static final String READ_BRAND = "브랜드 조회 성공";
 
     public static final String LIKE_SUCCCESS = "좋아요 성공";
     public static final String LIKE_FAIL = "좋아요 실패";
     public static final String LIKE_CANCEL_SUCCCESS = "좋아요 취소 성공";
     public static final String LIKE_CANCEL_FAIL = "좋아요 취소 실패";
-
+    public static final String ALREADY_LIKE = "이미 좋아요 한 브랜드입니다.";
+    public static final String NOT_LIKE = "좋아요 한 브랜드가 아닙니다.";
     public static final String NO_LIKE_BRAND = "좋아요 한 브랜드가 없습니다.";
     public static final String READ_LIKE_BRAND = "좋아요 한 브랜드 조회 성공";
 

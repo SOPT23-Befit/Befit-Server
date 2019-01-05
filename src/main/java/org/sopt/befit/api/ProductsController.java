@@ -5,6 +5,7 @@ import org.sopt.befit.model.DefaultRes;
 import org.sopt.befit.service.JwtService;
 import org.sopt.befit.service.BrandsService;
 import org.sopt.befit.service.ProductsService;
+import org.sopt.befit.service.UserService;
 import org.sopt.befit.utils.Auth.Auth;
 import org.sopt.befit.utils.ResponseMessage;
 import org.sopt.befit.utils.StatusCode;
@@ -23,11 +24,16 @@ import static org.sopt.befit.model.DefaultRes.res;
 public class ProductsController {
 
     final JwtService jwtService;
+    final UserService userService;
     final BrandsService brandsService;
     final ProductsService productsService;
 
-    ProductsController(final JwtService jwtService, final BrandsService brandsService, final ProductsService productsService){
+    public ProductsController(JwtService jwtService,
+                              UserService userService,
+                              BrandsService brandsService,
+                              ProductsService productsService) {
         this.jwtService = jwtService;
+        this.userService = userService;
         this.brandsService = brandsService;
         this.productsService = productsService;
     }

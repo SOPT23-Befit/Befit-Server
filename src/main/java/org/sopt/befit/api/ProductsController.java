@@ -93,7 +93,7 @@ public class ProductsController {
             if (header != null) {
                 int curIdx = jwtService.decode(header).getIdx();
                 List<String> getBrandsBySelectBrandStyle = brandsService.getBrandsBySelectBrandStyle(curIdx);
-                return new ResponseEntity<>( productsService.getProductByStyle(getBrandsBySelectBrandStyle), HttpStatus.OK);
+                return new ResponseEntity<>( productsService.getProductByStyle(getBrandsBySelectBrandStyle, curIdx), HttpStatus.OK);
             }
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.OK);
         } catch (Exception e) {

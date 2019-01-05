@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.sopt.befit.dto.Brands;
+import org.sopt.befit.model.ThreeProdOnBrandReq;
 
 import java.util.List;
 
@@ -37,9 +38,9 @@ public interface BrandsMapper {
     List<Brands> getBrandsByGender(@Param("user_idx") final int user_idx,
                                    @Param("gender") final String gender);
 
-    // 랜덤한 브랜드 3개 조회
-    @Select("SELECT * FROM brand ORDER BY RAND() LIMIT 3")
-    List<Brands> getBrandsByRandomThree();
+    // 해당 유저의 gender에 알맞는 랜덤한 브랜드 3개 조회
+    @Select("SELECT * FROM brand WHERE gender=#{gender} or gender=\"공용\" ORDER BY RAND() LIMIT 3")
+    List<ThreeProdOnBrandReq> getBrandsByRandomThree(@Param("gender") final String gender);
 
    // 랭킹 순 브랜드 조회
     @Select("select b.*, (select count(*) from like_brand as lb where lb.user_idx = u.idx and lb.brand_idx = b.idx) as likeFlag from user as u, brand as b where u.idx = 4")

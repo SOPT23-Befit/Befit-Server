@@ -20,7 +20,7 @@ public class ProductReq {
     private String link;
     private Object measure;
     private int like_score;
-    //좋아요
+    //좋아요 플래그
     private int product_like;
     //한글이름
     private String brand_Korean_name;

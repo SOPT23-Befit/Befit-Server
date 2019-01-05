@@ -4,11 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.sopt.befit.dto.Brands;
 import org.sopt.befit.dto.User;
 import org.sopt.befit.mapper.BrandsMapper;
+import org.sopt.befit.mapper.LikesMapper;
 import org.sopt.befit.mapper.ProductsMapper;
 import org.sopt.befit.mapper.UserMapper;
 import org.sopt.befit.model.BrandScore;
 import org.sopt.befit.model.DefaultRes;
 import org.sopt.befit.model.ProductReq;
+import org.sopt.befit.model.ThreeProdOnBrandReq;
 import org.sopt.befit.utils.ResponseMessage;
 import org.sopt.befit.utils.StatusCode;
 import org.springframework.stereotype.Service;
@@ -23,11 +25,13 @@ public class BrandsService {
     private final BrandsMapper brandsMapper;
     private final UserMapper userMapper;
     private final ProductsMapper productsMapper;
+    private final LikesMapper likesMapper;
 
-    public BrandsService(BrandsMapper brandsMapper, UserMapper userMapper, ProductsMapper productsMapper) {
+    public BrandsService(BrandsMapper brandsMapper, UserMapper userMapper, ProductsMapper productsMapper, LikesMapper likesMapper) {
         this.brandsMapper = brandsMapper;
         this.userMapper = userMapper;
         this.productsMapper = productsMapper;
+        this.likesMapper = likesMapper;
     }
 
     // 모든 브랜드 조회 - 이니셜 입력 안했을 경우
@@ -145,15 +149,31 @@ public class BrandsService {
     //해당 유저의 랜덤 3개 브랜드의 선호 점수가 가장 높은 세 개의 상품들 조회
     public DefaultRes getProductsByThreeBrands(final int user_idx) {
         final User curUser = userMapper.findByUserIdx(user_idx);
+        final String curUserGender = curUser.getGender();
+        final List<ThreeProdOnBrandReq> randomThreeBrands = brandsMapper.getBrandsByRandomThree(curUserGender);
+        final List<ThreeProdOnBrandReq> finalData = new ArrayList<>();
 
-        final List<Brands> randomThreeBrands = brandsMapper.getBrandsByRandomThree();
-
-        final List<ProductReq> getThreeProductsOnThreeBrands = new ArrayList<>();
-
-        for(Brands b : randomThreeBrands) {
-            getThreeProductsOnThreeBrands.addAll(productsMapper.getThreeProductByOneBrand(b.getIdx()));
+        for(ThreeProdOnBrandReq b : randomThreeBrands) {
+            b.setBrand_like(likesMapper.isLikeBrand(user_idx, b.getIdx()));
         }
-        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_THREE_TO_RANDOM_THREE_BRANDS_PRODUCTS, getThreeProductsOnThreeBrands);
+
+        List<ProductReq> getThreeProductsOnThreeBrands = new ArrayList<>();
+
+        for(int i=0; i<=randomThreeBrands.size()-1; i++) {
+            ThreeProdOnBrandReq b = randomThreeBrands.get(i);
+            getThreeProductsOnThreeBrands.addAll(productsMapper.getThreeProductByOneBrand(b.getIdx()));
+            List<ProductReq> ps = new ArrayList<>();
+            for(int j=0; j<=getThreeProductsOnThreeBrands.size()-1; j++) {
+                ProductReq p = getThreeProductsOnThreeBrands.get(j);
+                p.setMeasure(ProductsService.parseJson(p.getMeasure().toString()));
+                p.setProduct_like(likesMapper.isLikeProduct(user_idx, p.getIdx()));
+                ps.add(p);
+            }
+            b.setProducts(ps);
+            finalData.add(b);
+            getThreeProductsOnThreeBrands.clear();
+        }
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_THREE_TO_RANDOM_THREE_BRANDS_PRODUCTS, finalData);
     }
 
 //    // score 내림차순 정렬

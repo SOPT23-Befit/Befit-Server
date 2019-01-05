@@ -35,6 +35,10 @@ public interface LikesMapper {
     @Update("UPDATE brand SET like_score = like_score - 1 WHERE idx = #{brand_idx}")
     void updateLikeDown(@Param("brand_idx") final int brand_idx);
 
+    //brand like 여부 확인 : 1이면 like, 0이면 unlike
+    @Select("SELECT COUNT(*) FROM like_brand where user_idx = #{user_idx} and brand_idx = #{brand_idx}")
+    int isLikeBrand(@Param("user_idx") final int user_idx, @Param("brand_idx") final int brand_idx);
+
 
     //좋아요한 product 조회
     @Select("SELECT p.*, 1 AS product_like, (SELECT b.name_korean FROM brand AS b WHERE p.brand_idx = b.idx) AS brand_Korean_name , lt.idx AS like_idx " +
@@ -54,11 +58,11 @@ public interface LikesMapper {
     @Delete("DELETE FROM like_product WHERE user_idx = #{user_idx} AND product_idx = #{product_idx}")
     void deleteLikeProduct(@Param("user_idx") final int user_idx, @Param("product_idx") final int product_idx);
 
-    // 브랜드 좋아요 갯수 1 증가
+    // product 좋아요 갯수 1 증가
     @Update("UPDATE product SET like_score = like_score + 1 WHERE idx = #{product_idx}")
     void updateProductLikeUp(@Param("product_idx") final int product_idx);
 
-    // 브랜드 좋아요 갯수 1 감소
+    // product 좋아요 갯수 1 감소
     @Update("UPDATE product SET like_score = like_score - 1 WHERE idx = #{product_idx}")
     void updateProductLikeDown(@Param("product_idx") final int product_idx);
 

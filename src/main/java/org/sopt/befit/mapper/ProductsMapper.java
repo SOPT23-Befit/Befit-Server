@@ -47,7 +47,7 @@ public interface ProductsMapper {
     List<ProductReq> getProductByStyle(@Param("gender") final String gender, @Param("style") final String style, @Param("limit_count") final int limit_count);
 
     // 특정 브랜드의 like_score가 높은 세 개의 데이터 조회
-    @Select("select distinct image_url, idx, name, price, product_category_index, brand_idx, date, link, measure, like_score" +
-            " from product where brand_idx=#{brand_idx} order by like_score desc limit 3")
+    @Select("select p.*, b.name_korean as brand_Korean_name from product as p inner join brand as b " +
+            "on p.brand_idx = b.idx where brand_idx = #{brand_idx} order by like_score desc limit 3")
     List<ProductReq> getThreeProductByOneBrand(@Param("brand_idx") final int brand_idx);
 }

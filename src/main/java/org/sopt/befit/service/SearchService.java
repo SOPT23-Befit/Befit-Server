@@ -2,7 +2,10 @@ package org.sopt.befit.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.befit.dto.Brands;
+import org.sopt.befit.dto.Products;
+import org.sopt.befit.dto.User;
 import org.sopt.befit.mapper.SearchMapper;
+import org.sopt.befit.mapper.UserMapper;
 import org.sopt.befit.model.DefaultRes;
 import org.sopt.befit.model.ProductReq;
 import org.sopt.befit.model.SearchReq;
@@ -16,18 +19,21 @@ import java.util.List;
 @Service
 public class SearchService {
 
+    private final UserMapper userMapper;
+
     private final SearchMapper searchMapper;
 
-    public SearchService(SearchMapper searchMapper) {
+    public SearchService(final SearchMapper searchMapper, final UserMapper userMapper) {
         this.searchMapper = searchMapper;
+        this.userMapper = userMapper;
     }
 
     // 브랜드 이름으로 검색
-    public DefaultRes findBrandsByName(final int user_idx, final SearchReq searchReq) {
-        searchReq.setName(searchReq.getName().replace(" ", "").toUpperCase());
+    public DefaultRes findBrandsByName(final int user_idx, final String name) {
+        String brand_name = name.replace(" ", "").toUpperCase();
 
-        log.info(searchReq.getName());
-        final List<Brands> brandsList= searchMapper.findBrandsByName(user_idx, searchReq.getName());
+        log.info(brand_name);
+        final List<Brands> brandsList= searchMapper.findBrandsByName(user_idx, brand_name);
         if (brandsList.isEmpty())
             return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_BRAND);
         return DefaultRes.res(StatusCode.OK, ResponseMessage.BRADN_SEARCH_SUCCESS, brandsList);
@@ -49,5 +55,15 @@ public class SearchService {
             return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_PRODUCTS);
         }
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_SEARCH_PRODUCTS_POPULAR,ProductsService.ListParse(productsList));
+    }
+
+    // 상품 검색 초기화면
+    public DefaultRes fisrtSearchPage(final int user_idx){
+        String gender = userMapper.findByUserIdx(user_idx).getGender();
+        List<Products> productsList = searchMapper.firstSearchPage(gender);
+        for(Products products : productsList){
+            products.setMeasure(ProductsService.parseJson(products.getMeasure().toString()));
+        }
+        return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_FIRST_SEARCH_PAGE_PRODUCTS, productsList);
     }
 }

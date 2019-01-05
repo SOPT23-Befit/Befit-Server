@@ -2,6 +2,7 @@ package org.sopt.befit.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.befit.dto.Products;
+import org.sopt.befit.dto.User;
 import org.sopt.befit.model.DefaultRes;
 import org.sopt.befit.model.SearchReq;
 import org.sopt.befit.service.JwtService;
@@ -35,13 +36,13 @@ public class SearchController {
     @Auth
     @GetMapping("/brands")
     public ResponseEntity getBrandsByInitial(@RequestHeader("Authorization") final String header,
-                                             @RequestBody final SearchReq searchReq) {
+                                             @RequestParam("name") final String name) {
         try {
             if(header != null){
                 int curIdx = jwtService.decode(header).getIdx();
 
-                if(searchReq!=null)
-                    return new ResponseEntity<>(searchService.findBrandsByName(curIdx, searchReq), HttpStatus.OK);
+                if(!name.equals(""))
+                    return new ResponseEntity<>(searchService.findBrandsByName(curIdx, name), HttpStatus.OK);
 //            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.OK);
                 return new ResponseEntity<>(
                         new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.INPUT_VALUE), HttpStatus.OK);
@@ -55,38 +56,23 @@ public class SearchController {
         }
     }
 
-//    @GetMapping("/brands")
-//    public ResponseEntity getBrandsList(@RequestParam("name") final Optional<String> name) {
-//        try {
-////
-//            String up_name = name.get().toUpperCase();
-//            log.info(up_name);
-//            if(name.isPresent()) return new ResponseEntity<>(searchService.findBrandsByName(up_name), HttpStatus.OK);
-//            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.OK);
-//        }catch (Exception e) {
-//            log.error(e.getMessage());
-//            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-
-
     // 상품 이름으로 검색
     @Auth
     @GetMapping("/products/{type}")
     public ResponseEntity getBrandsByInitial(@RequestHeader("Authorization") final String header,
-                                             @RequestBody final SearchReq searchReq,
+                                             @RequestParam("name") final String name,
                                              @PathVariable(value="type") final String type) {
         try {
             if(header != null){
                 int curIdx = jwtService.decode(header).getIdx();
-                if(!searchReq.getName().isEmpty()){
+                if(!name.equals("")){
                     //upper string 처리
                     switch (type){
                         case "new":
-                            return new ResponseEntity(searchService.findPrdocutsByNameForNew(curIdx,searchReq.getName().replaceAll(" ", "")), HttpStatus.OK);
+                            return new ResponseEntity(searchService.findPrdocutsByNameForNew(curIdx,name.replaceAll(" ", "")), HttpStatus.OK);
 
                         case "popular":
-                            return new ResponseEntity<>(searchService.findPrdocutsByNameForPopular(curIdx,searchReq.getName().replaceAll(" ", "")), HttpStatus.OK);
+                            return new ResponseEntity<>(searchService.findPrdocutsByNameForPopular(curIdx,name.replaceAll(" ", "")), HttpStatus.OK);
 
                     }
                     return new ResponseEntity(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.INVALID_PRODUCTS_READ), HttpStatus.OK);
@@ -98,6 +84,27 @@ public class SearchController {
                     new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
 
         }catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    //상품 검색 초기화면
+    //24개 출력 / 성별에 따라서 옷 출력 (여자 : 여자 + 공용 / 남자 : 남자 + 공용) / 찜 개수로 상위판단
+    //> 100개를 성별에 따라 필터링하기, random해서 24개 뽑기, 뽑힌 24개중에 찜개수 상위 24개 나열하기
+
+    @Auth
+    @GetMapping("/firstSearchPage")
+    public ResponseEntity getBrandsByInitial(@RequestHeader("Authorization") final String header) {
+        try{
+
+            if(header != null) {
+                int curIdx = jwtService.decode(header).getIdx();
+                return new ResponseEntity<>(searchService.fisrtSearchPage(curIdx), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
+        }catch (Exception e){
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
         }

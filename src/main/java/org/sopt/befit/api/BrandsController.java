@@ -96,5 +96,19 @@ public class BrandsController {
     }
 
     // 랜덤 3개 브랜드 별 인기 상품 리스트 조회
+    @Auth
+    @GetMapping("/randomPopular/three")
+    public ResponseEntity getProductsByRandomBrands(@RequestHeader("Authorization") final String header) {
+        try {
+            if(header != null) {
+                int curIdx = jwtService.decode(header).getIdx();
+                return new ResponseEntity<>(brandsService.getProductsByThreeBrands(curIdx), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.OK);
+        }catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

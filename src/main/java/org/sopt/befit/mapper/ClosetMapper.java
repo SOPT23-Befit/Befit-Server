@@ -5,6 +5,8 @@ import org.sopt.befit.dto.Closet;
 import org.sopt.befit.dto.Products;
 import org.sopt.befit.model.ClosetReq;
 import org.sopt.befit.model.ClosetPostReq;
+import org.sopt.befit.model.SizeCompareReq;
+import org.sopt.befit.model.sizeCompareLink;
 
 import java.util.List;
 
@@ -26,7 +28,7 @@ public interface ClosetMapper {
     @Delete("DELETE FROM user_closet where idx = #{closet_idx}")
     void deleteClosetPrduct(@Param("user_idx") final int user_idx, @Param("closet_idx") final int closet_idx);
 
-    // 옷장 idx로 아이템 조회
+    // 옷장 idx로 아이템 조회 - 삭제 할 때 있는지 확인
     @Select("SELECT * FROM user_closet WHERE idx = #{closet_idx}")
     Closet findByClosetIdx(@Param("closet_idx") final int closet_idx);
 
@@ -51,10 +53,19 @@ public interface ClosetMapper {
                                    @Param("closet_idx") final int closet_idx);
 
     // 옷장 아이템 등록 시 상품 검색 - 브랜드명 + 카테고리
-    @Select("SELECT * FROM product WHERE brand_idx = #{brand_idx} and product_category_index = #{category_idx}")
+    @Select("SELECT * FROM product WHERE brand_idx = #{brand_idx} and product_category_index = #{category_idx} " +
+            "order by product.name desc")
     List<Products> getProductByBrandAndCategory (@Param("brand_idx") final int brand_idx,
                                            @Param("category_idx") final int category_idx);
 
     // 나의 옷장 아이템과 나의 선택 상품 사이즈 비교
+    @Select("select p.product_category_index, p.measure, uc.product_size from user_closet as uc, product as p where uc.idx = #{closet_idx} and p.idx = uc.product_idx")
+    SizeCompareReq getCompareMyProduct (@Param("user_idx") final int user_idx,
+                                        @Param("closet_idx") final int closet_idx);
 
+    @Select("select * from product as p where p.idx = #{product_idx}")
+    SizeCompareReq getCompareOtherProduct (@Param("product_idx") final int product_idx);
+
+    @Select("select my as my_url, ${column} as compare_url from compare_image where product_category_idx = #{category_idx}")
+    sizeCompareLink getLink (@Param("column") final String column, @Param("category_idx") final int category_idx);
 }

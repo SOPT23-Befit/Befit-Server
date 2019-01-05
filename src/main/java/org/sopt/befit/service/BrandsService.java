@@ -139,8 +139,6 @@ public class BrandsService {
             }
         }
 
-        log.info(resultStyles.toString());
-
         return resultStyles;
     }
 

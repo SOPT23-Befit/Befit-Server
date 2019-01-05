@@ -93,6 +93,22 @@ public class ProductsController {
     }
 
     @Auth
+    @GetMapping("/{product_idx}")
+    public ResponseEntity findProductsByCategory(@RequestHeader("Authorization") final String header,
+                                                 @PathVariable(value="product_idx") final int product_idx){
+        try{
+            if(header != null){
+                return new ResponseEntity(productsService.findProductById(product_idx),HttpStatus.OK);
+            }
+            return new ResponseEntity(new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
+        }catch (Exception e){
+            log.error(e.getMessage());
+            return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @Auth
     @GetMapping("/forUserRec")
     public ResponseEntity getForUserRecommandedProducts(@RequestHeader("Authorization") final String header) {
         try {

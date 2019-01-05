@@ -4,10 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
 import org.sopt.befit.dto.User;
 import org.sopt.befit.mapper.UserMapper;
-import org.sopt.befit.model.DefaultRes;
-import org.sopt.befit.model.PasswordFind;
-import org.sopt.befit.model.SignUpReq;
-import org.sopt.befit.model.UserupdateReq;
+import org.sopt.befit.model.*;
 import org.sopt.befit.utils.ResponseMessage;
 import org.sopt.befit.utils.StatusCode;
 import org.springframework.stereotype.Service;
@@ -42,16 +39,15 @@ public class UserService {
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_USER, userList);
     }
 
-    //password 새로 생성을위한 inform mation 체크 > 이후 password 변경을 위한 idx 전달
+    //password 새로 생성을위한 information 체크 > 이후 password 변경을 위한 idx 전달
     public DefaultRes InformForSetNewPass(final PasswordFind passwordFind){
-        if(passwordFind.is_finding_content()){
-            final User user = userMapper.findPasswordCheck(passwordFind);
-            if(user != null){
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER_CHECK,"userIdx : " + user.getIdx());
-            }
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
+        final User user = userMapper.findByEmail(passwordFind.getEmail());
+        log.info(user.toString());
+        if(user.getBirthday().equals(passwordFind.getBirthday())&& user.getName().equals(passwordFind.getName())){
+            final UserIdReq userIdReq = new UserIdReq(user.getIdx());
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER_CHECK, userIdReq);
         }
-        return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.HAVE_NOT_UPDATE_USER);
+        return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_FOUND_USER);
     }
 
     //회원가입
@@ -77,7 +73,7 @@ public class UserService {
                     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                     return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
                 }
-            } else return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.ALREADY_USER);
+            } else return DefaultRes.res(StatusCode.CONFLICT, ResponseMessage.ALREADY_USER);
         }
         return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.INVALID_CREATED_USER);
     }
@@ -91,7 +87,7 @@ public class UserService {
                 String passwordHashed = BCrypt.hashpw(passwordFind.getPassword(), BCrypt.gensalt());
                 passwordFind.setPassword(passwordHashed);
                 userMapper.updatePassword(passwordFind);
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.userNUM_message(passwordFind.getUserIdx(), ResponseMessage.UPDATE_PASSWORD_USER));
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_PASSWORD_USER);
             }
             return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.INVALID_UPDATE_USER);
         } catch (Exception e) {
@@ -109,7 +105,7 @@ public class UserService {
             log.info(userupdateReq.toString() + ">" + userupdateReq.is_brand());
             if(userupdateReq.is_brand()){
                 userMapper.updateBrand(userupdateReq, userIdx);
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.userNUM_message(userIdx, ResponseMessage.UPDATE_BRAND_USER));
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_BRAND_USER);
             }
             return DefaultRes.res(StatusCode.NO_CONTENT, ResponseMessage.INVALID_UPDATE_USER);
         } catch (Exception e) {
@@ -136,7 +132,7 @@ public class UserService {
                 updateUser.setPhone(userupdateReq.getPhone());
             }
             userMapper.updateCombineForm(updateUser, userIdx);
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.userNUM_message(userIdx, ResponseMessage.UPDATE_COMBINE_FROM_USER));
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_COMBINE_FROM_USER);
 
         } catch (Exception e) {
             //Rollback
@@ -154,7 +150,7 @@ public class UserService {
             if (user == null)
                 return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER);
             userMapper.deleteByUserIdx(userIdx);
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.userNUM_message(userIdx,ResponseMessage.DELETE_USER));
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.DELETE_USER);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

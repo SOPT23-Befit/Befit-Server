@@ -49,4 +49,11 @@ public interface ProductsMapper {
     @Select("select distinct image_url, idx, name, price, product_category_index, brand_idx, date, link, measure, like_score" +
             " from product where brand_idx=#{brand_idx} order by like_score desc limit 3")
     List<ProductReq> getThreeProductByOneBrand(@Param("brand_idx") final int brand_idx);
+
+    @Select("SELECT *, " +
+            "(SELECT COUNT(*) FROM like_product WHERE user_idx = product.idx) AS product_like, " +
+            "(SELECT name_korean FROM brand WHERE idx = product.brand_idx) AS brand_korean_name  " +
+            "FROM product WHERE idx= #{product_idx};")
+    ProductReq findProductById (@Param("product_idx") final int product_idx);
+
 }

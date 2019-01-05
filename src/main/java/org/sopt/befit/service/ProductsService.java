@@ -120,6 +120,17 @@ public class ProductsService
         }
     }
 
+    //특정 product 상세 조회
+    public DefaultRes findProductById(final int product_idx){
+
+        ProductReq productReq = productsMapper.findProductById(product_idx);
+        if(productReq != null){
+            productReq.setMeasure(parseJson(productReq.getMeasure().toString()));
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_PRODUCT, productReq);
+        }
+        return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_PRODUCT);
+    }
+
     //특정 유저를 위한 상품 추천 리스트 조회
     public DefaultRes getProductByStyle(final List<String> styles) {
         try{

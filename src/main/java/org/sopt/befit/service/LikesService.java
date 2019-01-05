@@ -53,11 +53,10 @@ public class LikesService {
                 }
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.ALREADY_LIKE);
             }
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_BRAND);
 
+            return DefaultRes.res(StatusCode.CONFLICT, ResponseMessage.LIKE_FAIL);
 
         } catch (Exception e) {
-            //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             log.error(e.getMessage());
             return DefaultRes.res(StatusCode.DB_ERROR, ResponseMessage.DB_ERROR);
@@ -79,7 +78,8 @@ public class LikesService {
                 }
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_LIKE);
             }
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_BRAND);
+            return DefaultRes.res(StatusCode.CONFLICT, ResponseMessage.LIKE_CANCEL_FAIL);
+
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -106,7 +106,7 @@ public class LikesService {
                 likesMapper.updateProductLikeUp(product_idx);
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.LIKE_SUCCCESS);
             }
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_FAIL);
+            return DefaultRes.res(StatusCode.CONFLICT, ResponseMessage.LIKE_FAIL);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -125,7 +125,7 @@ public class LikesService {
                 likesMapper.updateProductLikeDown(product_idx);
                 return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_CANCEL_SUCCCESS);
             }
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_CANCEL_FAIL);
+            return DefaultRes.res(StatusCode.CONFLICT, ResponseMessage.LIKE_CANCEL_FAIL);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

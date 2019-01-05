@@ -6,9 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.sopt.befit.dto.Brands;
 import org.sopt.befit.dto.Products;
+import org.sopt.befit.dto.User;
 import org.sopt.befit.mapper.BrandsMapper;
 import org.sopt.befit.mapper.LikesMapper;
 import org.sopt.befit.mapper.ProductsMapper;
+import org.sopt.befit.mapper.UserMapper;
 import org.sopt.befit.model.DefaultRes;
 import org.sopt.befit.model.ProductReq;
 import org.sopt.befit.utils.ResponseMessage;
@@ -35,10 +37,13 @@ public class ProductsService
 
     final BrandsMapper brandsMapper;
 
-    ProductsService(final ProductsMapper productsMapper, final LikesMapper likesMapper, final BrandsMapper brandsMapper){
+    final UserMapper userMapper;
+
+    ProductsService(final ProductsMapper productsMapper, final LikesMapper likesMapper, final BrandsMapper brandsMapper, final UserMapper userMapper){
         this.productsMapper = productsMapper;
         this.likesMapper = likesMapper;
         this.brandsMapper = brandsMapper;
+        this.userMapper = userMapper;
     }
 
     //mapper로 받은 measure의 string을 jsonNode로 변환
@@ -132,11 +137,12 @@ public class ProductsService
     }
 
     //특정 유저를 위한 상품 추천 리스트 조회
-    public DefaultRes getProductByStyle(final List<String> styles) {
+    public DefaultRes getProductByStyle(final List<String> styles, final int curIdx) {
         try{
+            final User curUser = userMapper.findByUserIdx(curIdx);
+            final String gender = curUser.getGender();
             List<ProductReq> rawResult = new ArrayList<>();
             List<ProductReq> result = new ArrayList<>();
-
             List<Integer> limit_counts = new ArrayList<>();
 
             if(styles.size() == 2) {
@@ -156,14 +162,12 @@ public class ProductsService
             int i=0;
 
             for(String s : styles) {
-                rawResult.addAll(productsMapper.getProductByStyle(s, limit_counts.get(i)));
+                rawResult.addAll(productsMapper.getProductByStyle(gender, s, limit_counts.get(i)));
                 i++;
             }
 
-            log.info(Integer.toString(rawResult.size()));
-
             for(ProductReq p : rawResult) {
-                if(!result.contains(p)) {
+                if (!result.contains(p)) {
                     p.setMeasure(ProductsService.parseJson(p.getMeasure().toString()));
                     result.add(p);
                 } else {

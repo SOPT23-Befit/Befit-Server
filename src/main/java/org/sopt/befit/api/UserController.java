@@ -65,11 +65,8 @@ public class UserController {
     @PostMapping("") // befit 회원 가입
     public ResponseEntity signup(@RequestBody final SignUpReq signUpReq) {
         try {
-            if(signUpReq!=null){
-                log.info(signUpReq.toString());
-                return new ResponseEntity<>(userService.save(signUpReq), HttpStatus.OK);
-            }
-            return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.INVALID_CREATED_USER), HttpStatus.OK);
+            log.info(signUpReq.toString());
+            return new ResponseEntity<>(userService.save(signUpReq), HttpStatus.OK);
         }catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -83,14 +80,7 @@ public class UserController {
     public ResponseEntity updateUser(
             @RequestBody final PasswordFind passwordFind){
         try{
-            if(passwordFind!=null){
-                if(passwordFind.getPassword() != null){
-                    return new ResponseEntity(userService.updateUser(passwordFind), HttpStatus.OK);
-                }
-                return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.HAVE_NOT_UPDATE_USER), HttpStatus.OK);
-            }
-            return new ResponseEntity(new DefaultRes(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_USER), HttpStatus.OK);
-
+            return new ResponseEntity(userService.updateUser(passwordFind), HttpStatus.OK);
         }catch (Exception e){
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -104,14 +94,11 @@ public class UserController {
             @RequestHeader("Authorization") final String header,
             @RequestBody final UserupdateReq userupdateReq) {
         try {
-            if(userupdateReq!=null){
-                if(header != null){
-                    int curIdx = jwtService.decode(header).getIdx();
-                    return new ResponseEntity(userService.updateBrand(userupdateReq , curIdx), HttpStatus.OK);
-                }
-                return new ResponseEntity(new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
+            if(header != null){
+                int curIdx = jwtService.decode(header).getIdx();
+                return new ResponseEntity(userService.updateBrand(userupdateReq , curIdx), HttpStatus.OK);
             }
-            return new ResponseEntity<>(new DefaultRes(StatusCode.BAD_REQUEST, ResponseMessage.HAVE_NOT_UPDATE_USER), HttpStatus.OK);
+            return new ResponseEntity(new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
         }catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(FAIL_DEFAULT_RES, HttpStatus.INTERNAL_SERVER_ERROR);

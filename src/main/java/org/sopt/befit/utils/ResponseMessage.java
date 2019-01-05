@@ -35,6 +35,9 @@ public class ResponseMessage {
     public static final String NO_LIKE_PRODUCT = "좋아요 한 상품이 없습니다.";
     public static final String READ_LIKE_PRODUCT = "좋아요 한 상품 조회 성공";
 
+    public static final String READ_PRODUCT = "상품 조회 성공";
+    public static final String NOT_PRODUCT = "없는 상품 입니다.";
+
     public static final String CLOSET_CREATE_SUCCESS = "옷장 아이템 등록 성공";
     public static final String CLOSET_CREATE_FAIL = "옷장 아이템 등록 실패";
     public static final String CLOSET_DELETE_SUCCESS = "옷장 아이템 삭제 성공";
@@ -75,10 +78,4 @@ public class ResponseMessage {
     public static final String INVALID_PRODUCTS_READ = "잘못된 상품 리스트 조회 URL";
 
     public static final String READ_FIRST_SEARCH_PAGE_PRODUCTS = "상품 검색 초기 화면, 상품 조회 완료";
-
-
-    public static String userNUM_message(final int useridx, final String message){
-        return ("user_no : "+useridx + " " + message);
-    }
-
 }

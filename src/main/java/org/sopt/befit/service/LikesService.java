@@ -27,6 +27,9 @@ public class LikesService {
     // 좋아요 한 브랜드 리스트 조회
     public DefaultRes getLikeBrands(final int user_idx) {
         final List<Brands> brandsList = likesMapper.getLikeBrands(user_idx);
+//        if (brandsList.isEmpty())
+//            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NO_LIKE_BRAND);
+
         if (brandsList.isEmpty())
             return DefaultRes.res(StatusCode.OK, ResponseMessage.NO_LIKE_BRAND);
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_LIKE_BRAND, brandsList);

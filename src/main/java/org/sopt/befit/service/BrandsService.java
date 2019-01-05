@@ -34,21 +34,18 @@ public class BrandsService {
     public DefaultRes getBrands(final int user_idx) {
         final List<Brands> brandsList = brandsMapper.getBrands(user_idx);
         if (brandsList.isEmpty())
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_BRAND);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_BRAND, null);
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_BRAND, brandsList);
     }
 
     // 이니셜로 브랜드 조회
     public DefaultRes getBrandsByInitial(final int user_idx, final Character initial) {
         List<Brands> brandsList = null;
-        if(initial == '*'){
-            brandsList = brandsMapper.getBrandsEct(user_idx, initial);
-        }
-        else {
-            brandsList = brandsMapper.getBrandsByInitial(user_idx, initial);
-        }
+        if(initial == '*') brandsList = brandsMapper.getBrandsEct(user_idx, initial);
+        else brandsList = brandsMapper.getBrandsByInitial(user_idx, initial);
         if (brandsList.isEmpty())
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_FOUND_BRAND);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_BRAND, null);
+
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_BRAND, brandsList);
     }
 
@@ -56,8 +53,10 @@ public class BrandsService {
     public DefaultRes getBrandInfo(final int user_idx, final int brand_idx) {
 
         final Brands brandInfo = brandsMapper.getBrandInfo(user_idx, brand_idx);
+
         if (brandInfo == null)
-            return DefaultRes.res(StatusCode.OK, "brand_idx : {" + brand_idx + "} 브랜드 정보 조회 실패");
+            return DefaultRes.res(StatusCode.NOT_FOUND, "없는 브랜드 입니다.");
+
         return DefaultRes.res(StatusCode.OK, "brand_idx : {" + brand_idx + "} 브랜드 정보 조회 성공", brandInfo);
     }
 

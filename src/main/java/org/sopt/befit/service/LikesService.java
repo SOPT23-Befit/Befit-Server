@@ -27,8 +27,8 @@ public class LikesService {
     // 좋아요 한 브랜드 리스트 조회
     public DefaultRes getLikeBrands(final int user_idx) {
         final List<Brands> brandsList = likesMapper.getLikeBrands(user_idx);
-        if (brandsList.isEmpty())
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NO_LIKE_BRAND);
+//        if (brandsList.isEmpty())
+//            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NO_LIKE_BRAND);
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_LIKE_BRAND, brandsList);
     }
 
@@ -42,7 +42,7 @@ public class LikesService {
                 likesMapper.updateLikeUp(brand_idx);
                 return DefaultRes.res(StatusCode.CREATED, ResponseMessage.LIKE_SUCCCESS);
             }
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.LIKE_FAIL);
+            return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_FAIL);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

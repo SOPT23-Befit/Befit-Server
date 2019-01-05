@@ -21,7 +21,7 @@ public class ResponseMessage {
     public static final String CURRENT_USER = "접근한 유저와 토큰의 유저가 같다.";
     public static final String NOT_CURRENT_USER = "접근한 유저와 토큰의 유저가 다르다.";
 
-    public static final String NOT_FOUND_BRAND = "브랜드 조회 실패";
+    public static final String NOT_FOUND_BRAND = "브랜드가 없습니다.";
     public static final String READ_BRAND = "브랜드 조회 성공";
 
     public static final String LIKE_SUCCCESS = "좋아요 성공";

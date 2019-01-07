@@ -75,7 +75,7 @@ public class LikesService {
                     likesMapper.updateLikeDown(brand_idx);
                     return DefaultRes.res(StatusCode.OK, ResponseMessage.LIKE_CANCEL_SUCCCESS);
                 }
-                return DefaultRes.res(StatusCode.OK, ResponseMessage.NOT_LIKE);
+                return DefaultRes.res(StatusCode.CONFLICT, ResponseMessage.NOT_LIKE);
             }
             return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_BRAND);
 

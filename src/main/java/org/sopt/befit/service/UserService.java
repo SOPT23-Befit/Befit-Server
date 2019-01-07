@@ -42,10 +42,11 @@ public class UserService {
     //password 새로 생성을위한 information 체크 > 이후 password 변경을 위한 idx 전달
     public DefaultRes InformForSetNewPass(final PasswordFind passwordFind){
         final User user = userMapper.findByEmail(passwordFind.getEmail());
-        log.info(user.toString());
-        if(user.getBirthday().equals(passwordFind.getBirthday())&& user.getName().equals(passwordFind.getName())){
-            final UserIdReq userIdReq = new UserIdReq(user.getIdx());
-            return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER_CHECK, userIdReq);
+        if(user!=null){
+            if(user.getBirthday().equals(passwordFind.getBirthday())&& user.getName().equals(passwordFind.getName())){
+                final UserIdReq userIdReq = new UserIdReq(user.getIdx());
+                return DefaultRes.res(StatusCode.OK, ResponseMessage.UPDATE_USER_CHECK, userIdReq);
+            }
         }
         return DefaultRes.res(StatusCode.BAD_REQUEST, ResponseMessage.NOT_FOUND_USER);
     }

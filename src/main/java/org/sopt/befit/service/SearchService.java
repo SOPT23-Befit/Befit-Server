@@ -60,9 +60,9 @@ public class SearchService {
     // 상품 검색 초기화면
     public DefaultRes fisrtSearchPage(final int user_idx){
         String gender = userMapper.findByUserIdx(user_idx).getGender();
-        List<Products> productsList = searchMapper.firstSearchPage(gender);
-        for(Products products : productsList){
-            products.setMeasure(ProductsService.parseJson(products.getMeasure().toString()));
+        List<ProductReq> productsList = searchMapper.firstSearchPage(gender);
+        for(ProductReq productReq : productsList){
+            productReq.setMeasure(ProductsService.parseJson(productReq.getMeasure().toString()));
         }
         return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_FIRST_SEARCH_PAGE_PRODUCTS, productsList);
     }

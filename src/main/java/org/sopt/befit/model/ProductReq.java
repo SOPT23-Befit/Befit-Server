@@ -23,5 +23,7 @@ public class ProductReq {
     //좋아요 플래그
     private int product_like;
     //한글이름
-    private String brand_Korean_name;
+    private String name_korean;
+    //영어이름
+    private String name_english;
 }

@@ -12,35 +12,34 @@ import java.util.List;
 @Mapper
 public interface ProductsMapper {
 
-    @Select("SELECT p.*, " +
-            "(SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = #{curIdx} AND lp.product_idx = p.idx ) AS product_like , " +
-            "(SELECT b.name_korean from brand AS b WHERE p.brand_idx = b.idx) AS brand_Korean_name " +
-            "FROM user AS u, product AS p WHERE u.idx = #{curIdx}")
+    @Select("select k.*, b.name_english, b.name_korean from brand as b, " +
+            "(SELECT p.*, (SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = #{curIdx} AND lp.product_idx = p.idx ) AS product_like " +
+            "FROM user AS u, product AS p WHERE u.idx = #{curIdx}) as k WHERE k.brand_idx = b.idx;")
     List<ProductReq> findAll(@Param("curIdx") final int curIdx);
 
-    @Select("SELECT p.*, " +
-            "(SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = #{curIdx} AND lp.product_idx = p.idx ) AS product_like , " +
-            "(SELECT b.name_korean from brand AS b WHERE p.brand_idx = b.idx) AS brand_Korean_name " +
-            "FROM user AS u, product AS p WHERE u.idx = #{curIdx} AND p.product_category_index = #{product_category_index} ORDER BY date DESC ")
+    @Select("select k.*, b.name_english, b.name_korean from brand as b, " +
+            "(SELECT p.*, (SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = #{curIdx} AND lp.product_idx = p.idx ) AS product_like " +
+            "FROM user AS u, product AS p WHERE u.idx = #{curIdx} AND p.product_category_index = #{product_category_index}) as k WHERE k.brand_idx = b.idx ORDER BY date DESC;")
     List<ProductReq> findByCategoryNew(@Param("product_category_index") final int product_category_index, @Param("curIdx") final int curIdx);
 
-    @Select("SELECT p.*, " +
-            "(SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = #{curIdx} AND lp.product_idx = p.idx ) AS product_like , " +
-            "(SELECT b.name_korean from brand AS b WHERE p.brand_idx = b.idx) AS brand_Korean_name " +
-            "FROM user AS u, product AS p WHERE u.idx = #{curIdx} AND p.product_category_index = #{product_category_index} ORDER BY like_score DESC ")
+
+    @Select("select k.*, b.name_english, b.name_korean from brand as b, " +
+            "(SELECT p.*, (SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = #{curIdx} AND lp.product_idx = p.idx ) AS product_like " +
+            "FROM user AS u, product AS p WHERE u.idx = #{curIdx} AND p.product_category_index = #{product_category_index}) as k WHERE k.brand_idx = b.idx ORDER BY like_score DESC;")
     List<ProductReq> findByCategoryPopular(@Param("product_category_index") final int product_category_index, @Param("curIdx") final int curIdx);
 
-    @Select("SELECT p.*, " +
-            "(SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = #{curIdx} AND lp.product_idx = p.idx ) AS product_like , " +
-            "(SELECT b.name_korean from brand AS b WHERE p.brand_idx = b.idx) AS brand_Korean_name " +
-            "FROM user AS u, product AS p WHERE u.idx = #{curIdx} AND p.brand_idx = #{brand_idx} ORDER BY date DESC ")
+    @Select("elect k.*, b.name_english, b.name_korean from brand as b, " +
+            "(SELECT p.*, (SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = #{curIdx} AND lp.product_idx = p.idx ) AS product_like " +
+            "FROM user AS u, product AS p WHERE u.idx = #{curIdx} AND p.brand_idx = #{brand_idx}) as k WHERE k.brand_idx = b.idx ORDER BY date DESC;")
     List<ProductReq> findByBrandNew(@Param("brand_idx") final int brand_idx, @Param("curIdx") final int curIdx);
 
-    @Select("SELECT p.*, " +
-            "(SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = #{curIdx} AND lp.product_idx = p.idx ) AS product_like , " +
-            "(SELECT b.name_korean from brand AS b WHERE p.brand_idx = b.idx) AS brand_Korean_name " +
-            "FROM user AS u, product AS p WHERE u.idx = #{curIdx} AND p.brand_idx = #{brand_idx} ORDER BY like_score DESC ")
+    @Select("elect k.*, b.name_english, b.name_korean from brand as b, " +
+            "(SELECT p.*, (SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = #{curIdx} AND lp.product_idx = p.idx ) AS product_like " +
+            "FROM user AS u, product AS p WHERE u.idx = #{curIdx} AND p.brand_idx = #{brand_idx}) as k WHERE k.brand_idx = b.idx ORDER BY like_score DESC;")
     List<ProductReq> findByBrandPopular(@Param("brand_idx") final int brand_idx, @Param("curIdx") final int curIdx);
+
+
+//    유정
 
     @Select("select p.* from product as p inner join (select idx, style1 from brand where gender=\"공용\" or gender=#{gender}) as b on b.style1=#{style} " +
             "and p.brand_idx=b.idx order by like_score desc limit #{limit_count}")

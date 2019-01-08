@@ -54,8 +54,8 @@ public interface ProductsMapper {
 
     //특정 상품 조회
     @Select("select k.*, b.name_english, b.name_korean from brand as b, " +
-            "(SELECT p.*, (SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = 1 AND lp.product_idx = p.idx ) AS product_like " +
-            "FROM  product AS p WHERE idx =2) as k WHERE k.brand_idx = b.idx;")
-    ProductReq findProductById (@Param("product_idx") final int product_idx);
+            "(SELECT p.*, (SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = #{user_idx} AND lp.product_idx = p.idx ) AS product_like " +
+            "FROM  product AS p WHERE idx =#{product_idx}) as k WHERE k.brand_idx = b.idx;")
+    ProductReq findProductById (@Param("product_idx") final int product_idx, @Param("user_idx") final int user_idx);
 
 }

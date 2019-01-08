@@ -41,9 +41,9 @@ public interface LikesMapper {
 
 
     //좋아요한 product 조회
-    @Select("SELECT p.*, 1 AS product_like, (SELECT b.name_korean FROM brand AS b WHERE p.brand_idx = b.idx) AS brand_Korean_name , lt.idx AS like_idx " +
-            "FROM product as p, (SELECT * FROM like_product AS lp WHERE lp.user_idx = #{user_idx}) AS lt " +
-            "WHERE lt.product_idx = p.idx  ORDER BY like_idx DESC;")
+    @Select("select k.*, 1 AS product_like, b.name_english, b.name_korean from brand as b, " +
+            "(SELECT p.*, lt.idx as like_idx FROM product AS p, (SELECT * FROM like_product AS lp WHERE lp.user_idx = 3) AS lt WHERE lt.product_idx = p.idx) as k  " +
+            "WHERE k.brand_idx = b.idx ORDER BY like_idx DESC;")
     List<ProductReq> getLikeProducts(@Param("user_idx") final int user_idx);
 
     //product like 여부 확인 : 1이면 like, 0이면 unlike

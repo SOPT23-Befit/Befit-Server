@@ -3,8 +3,10 @@ package org.sopt.befit.service;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.befit.dto.Brands;
 import org.sopt.befit.dto.Likes;
+import org.sopt.befit.dto.Products;
 import org.sopt.befit.mapper.BrandsMapper;
 import org.sopt.befit.mapper.LikesMapper;
+import org.sopt.befit.mapper.ProductsMapper;
 import org.sopt.befit.model.DefaultRes;
 import org.sopt.befit.model.ProductReq;
 import org.sopt.befit.utils.ResponseMessage;
@@ -21,10 +23,12 @@ public class LikesService {
 
     private final BrandsMapper brandsMapper;
     private final LikesMapper likesMapper;
+    private final ProductsMapper productsMapper;
 
-    public LikesService(BrandsMapper brandsMapper, LikesMapper likesMapper) {
+    public LikesService(BrandsMapper brandsMapper, LikesMapper likesMapper, ProductsMapper productsMapper) {
         this.brandsMapper = brandsMapper;
         this.likesMapper = likesMapper;
+        this.productsMapper = productsMapper;
     }
 
     // 좋아요 한 브랜드 리스트 조회
@@ -99,13 +103,17 @@ public class LikesService {
     @Transactional
     public DefaultRes postLikeProduct(final int user_idx, final int product_idx) {
         try {
-            int isLike = likesMapper.isLikeProduct(user_idx, product_idx);
-            if(isLike == 0) {
-                likesMapper.insertLikeProduct(user_idx, product_idx);
-                likesMapper.updateProductLikeUp(product_idx);
-                return DefaultRes.res(StatusCode.CREATED, ResponseMessage.LIKE_SUCCCESS);
+            Products products = productsMapper.isInProduct(product_idx);
+            if(products != null){
+                int isLike = likesMapper.isLikeProduct(user_idx, product_idx);
+                if(isLike == 0) {
+                    likesMapper.insertLikeProduct(user_idx, product_idx);
+                    likesMapper.updateProductLikeUp(product_idx);
+                    return DefaultRes.res(StatusCode.CREATED, ResponseMessage.LIKE_SUCCCESS);
+                }
+                return DefaultRes.res(StatusCode.CONFLICT, ResponseMessage.ALREADY_LIKE);
             }
-            return DefaultRes.res(StatusCode.CONFLICT, ResponseMessage.LIKE_FAIL);
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_BRAND);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

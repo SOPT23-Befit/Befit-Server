@@ -41,7 +41,8 @@ public interface ProductsMapper {
 
 //    유정
 
-    @Select("select p.* from product as p inner join (select idx, style1 from brand where gender=\"공용\" or gender=#{gender}) as b on b.style1=#{style} " +
+    @Select("select p.*, b.name_korean as name_korean, b.name_english as name_english from product as p inner join " +
+            "(select idx, style1, name_english, name_korean from brand where gender=\"공용\" or gender=#{gender}) as b on b.style1=#{style} " +
             "and p.brand_idx=b.idx order by like_score desc limit #{limit_count}")
     List<ProductReq> getProductByStyle(@Param("gender") final String gender, @Param("style") final String style, @Param("limit_count") final int limit_count);
 

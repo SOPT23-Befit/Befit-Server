@@ -41,12 +41,13 @@ public interface ProductsMapper {
 
 //    유정
 
-    @Select("select p.* from product as p inner join (select idx, style1 from brand where gender=\"공용\" or gender=#{gender}) as b on b.style1=#{style} " +
+    @Select("select p.*, b.name_korean as name_korean, b.name_english as name_english from product as p inner join " +
+            "(select idx, style1, name_english, name_korean from brand where gender=\"공용\" or gender=#{gender}) as b on b.style1=#{style} " +
             "and p.brand_idx=b.idx order by like_score desc limit #{limit_count}")
     List<ProductReq> getProductByStyle(@Param("gender") final String gender, @Param("style") final String style, @Param("limit_count") final int limit_count);
 
     // 특정 브랜드의 like_score가 높은 세 개의 데이터 조회
-    @Select("select p.*, b.name_korean as brand_Korean_name from product as p inner join brand as b " +
+    @Select("select p.*, b.name_korean as name_korean, b.name_english as name_english from product as p inner join brand as b " +
             "on p.brand_idx = b.idx where brand_idx = #{brand_idx} order by like_score desc limit 3")
     List<ProductReq> getThreeProductByOneBrand(@Param("brand_idx") final int brand_idx);
 

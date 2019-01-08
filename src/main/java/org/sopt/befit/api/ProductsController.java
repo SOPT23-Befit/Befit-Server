@@ -98,7 +98,8 @@ public class ProductsController {
                                                  @PathVariable(value="product_idx") final int product_idx){
         try{
             if(header != null){
-                return new ResponseEntity(productsService.findProductById(product_idx),HttpStatus.OK);
+                int curIdx = jwtService.decode(header).getIdx();
+                return new ResponseEntity(productsService.findProductById(product_idx, curIdx),HttpStatus.OK);
             }
             return new ResponseEntity(new DefaultRes(StatusCode.UNAUTHORIZED, ResponseMessage.AUTHORIZATION_FAIL), HttpStatus.OK);
         }catch (Exception e){

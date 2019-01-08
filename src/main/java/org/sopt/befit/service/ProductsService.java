@@ -126,9 +126,9 @@ public class ProductsService
     }
 
     //특정 product 상세 조회
-    public DefaultRes findProductById(final int product_idx){
+    public DefaultRes findProductById(final int product_idx, final int curIdx){
 
-        ProductReq productReq = productsMapper.findProductById(product_idx);
+        ProductReq productReq = productsMapper.findProductById(product_idx, curIdx);
         if(productReq != null){
             productReq.setMeasure(parseJson(productReq.getMeasure().toString()));
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_PRODUCT, productReq);

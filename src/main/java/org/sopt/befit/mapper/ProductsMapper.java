@@ -58,4 +58,8 @@ public interface ProductsMapper {
             "FROM  product AS p WHERE idx =#{product_idx}) as k WHERE k.brand_idx = b.idx;")
     ProductReq findProductById (@Param("product_idx") final int product_idx, @Param("user_idx") final int user_idx);
 
+    //특정 상품 존재 여부 확인
+    @Select("SELECT * FROM product WHERE idx = #{product_idx};")
+    Products isInProduct(@Param("product_idx") final int productidx);
+
 }

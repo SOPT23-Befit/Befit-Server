@@ -50,10 +50,11 @@ public interface ProductsMapper {
             "on p.brand_idx = b.idx where brand_idx = #{brand_idx} order by like_score desc limit 3")
     List<ProductReq> getThreeProductByOneBrand(@Param("brand_idx") final int brand_idx);
 
-    @Select("SELECT *, " +
-            "(SELECT COUNT(*) FROM like_product WHERE user_idx = product.idx) AS product_like, " +
-            "(SELECT name_korean FROM brand WHERE idx = product.brand_idx) AS brand_korean_name  " +
-            "FROM product WHERE idx= #{product_idx};")
+
+    //특정 상품 조회
+    @Select("select k.*, b.name_english, b.name_korean from brand as b, " +
+            "(SELECT p.*, (SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = 1 AND lp.product_idx = p.idx ) AS product_like " +
+            "FROM  product AS p WHERE idx =2) as k WHERE k.brand_idx = b.idx;")
     ProductReq findProductById (@Param("product_idx") final int product_idx);
 
 }

@@ -21,16 +21,17 @@ public interface SearchMapper {
                                     @Param("name") final String name);
 
     // 상품 검색 신상순
-    @Select("SELECT (SELECT count(*) FROM like_product where product.idx=product_idx AND user_idx=#{user_idx}) AS is_liked, product.*, " +
-            "(SELECT name_korean FROM brand WHERE product.brand_idx = idx) AS brand_name " +
-            "FROM product WHERE REPLACE(name, ' ', '') LIKE CONCAT('%',#{name},'%') ORDER BY date DESC;")
+    @Select("select k.*, b.name_english, b.name_korean from brand as b, " +
+            "(SELECT p.*, (SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = #{user_idx} AND lp.product_idx = p.idx ) AS product_like " +
+            "FROM product AS p WHERE REPLACE(p.name, ' ', '') LIKE CONCAT('%',#{name},'%')) as k WHERE k.brand_idx = b.idx ORDER BY date DESC;")
     List<ProductReq> findByProductByNameForNew(@Param("user_idx") final int user_idx, @Param("name") final String name);
 
     // 상품 검색 인기순
-    @Select("SELECT (SELECT count(*) FROM like_product where product.idx=product_idx AND user_idx=#{user_idx}) AS is_liked, product.*, " +
-            "(SELECT name_korean FROM brand WHERE product.brand_idx = idx) AS brand_name " +
-            "FROM product WHERE REPLACE(name, ' ', '') LIKE CONCAT('%',#{name},'%') ORDER BY like_score DESC;")
+    @Select("select k.*, b.name_english, b.name_korean from brand as b, " +
+            "(SELECT p.*, (SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = #{user_idx} AND lp.product_idx = p.idx ) AS product_like " +
+            "FROM product AS p WHERE REPLACE(p.name, ' ', '') LIKE CONCAT('%',#{name},'%')) as k WHERE k.brand_idx = b.idx ORDER BY like_score DESC;")
     List<ProductReq> findByProductByNameForPopular(@Param("user_idx") final int user_idx, @Param("name") final String name);
+
 
     // 상품 검색 초기화면
     // 24개 / 성별에 따라서 OK / 찜개수 /

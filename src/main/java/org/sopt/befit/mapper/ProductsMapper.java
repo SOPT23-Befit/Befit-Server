@@ -19,14 +19,14 @@ public interface ProductsMapper {
 
     @Select("select k.*, b.name_english, b.name_korean from brand as b, " +
             "(SELECT p.*, (SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = #{curIdx} AND lp.product_idx = p.idx ) AS product_like " +
-            "FROM user AS u, product AS p WHERE u.idx = #{curIdx} AND p.product_category_index = #{product_category_index}) as k WHERE k.brand_idx = b.idx ORDER BY date DESC;")
-    List<ProductReq> findByCategoryNew(@Param("product_category_index") final int product_category_index, @Param("curIdx") final int curIdx);
+            "FROM user AS u, product AS p WHERE u.idx = #{curIdx} AND p.product_category_index = #{product_category_index}) as k WHERE (b.gender = #{gender} or b.gender = '공용') and k.brand_idx = b.idx ORDER BY date DESC;")
+    List<ProductReq> findByCategoryNew(@Param("product_category_index") final int product_category_index, @Param("curIdx") final int curIdx, @Param("gender") final String gender);
 
 
     @Select("select k.*, b.name_english, b.name_korean from brand as b, " +
             "(SELECT p.*, (SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = #{curIdx} AND lp.product_idx = p.idx ) AS product_like " +
-            "FROM user AS u, product AS p WHERE u.idx = #{curIdx} AND p.product_category_index = #{product_category_index}) as k WHERE k.brand_idx = b.idx ORDER BY like_score DESC;")
-    List<ProductReq> findByCategoryPopular(@Param("product_category_index") final int product_category_index, @Param("curIdx") final int curIdx);
+            "FROM user AS u, product AS p WHERE u.idx = #{curIdx} AND p.product_category_index = #{product_category_index}) as k WHERE (b.gender = #{gender} or b.gender = '공용') and k.brand_idx = b.idx ORDER BY like_score DESC;")
+    List<ProductReq> findByCategoryPopular(@Param("product_category_index") final int product_category_index, @Param("curIdx") final int curIdx, @Param("gender") final String gender);
 
     @Select("select k.*, b.name_english, b.name_korean from brand as b, " +
             "(SELECT p.*, (SELECT COUNT(*) from like_product AS lp WHERE lp.user_idx = #{curIdx} AND lp.product_idx = p.idx ) AS product_like " +

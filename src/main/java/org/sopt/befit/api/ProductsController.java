@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.sopt.befit.model.DefaultRes.FAIL_DEFAULT_RES;
 import static org.sopt.befit.model.DefaultRes.res;
@@ -58,7 +59,9 @@ public class ProductsController {
     public ResponseEntity findProductsByCategory(@RequestHeader("Authorization") final String header,
                                                   @PathVariable(value="sort") final String sort,
                                                   @PathVariable(value="type") final String type,
-                                                  @PathVariable(value = "type_idx")final int type_idx){
+                                                  @PathVariable(value = "type_idx")final int type_idx,
+                                                 @RequestParam("gender") final Optional<String> gender
+    ){
         try{
             if(header != null){
                 int curIdx = jwtService.decode(header).getIdx();
@@ -67,9 +70,16 @@ public class ProductsController {
                         if(type_idx>=0 && type_idx<=15){//category 범위 올바른지 확인
                             switch (sort){ //sorting 방법
                                 case "new" :
-                                    return new ResponseEntity(productsService.findCategoryProductsByNew(curIdx, type_idx), HttpStatus.OK);
+                                    if(gender.isPresent()){
+                                        return new ResponseEntity(productsService.findCategoryProductsByNew(curIdx, type_idx, gender.get()), HttpStatus.OK);
+                                    }
+                                    return new ResponseEntity(new DefaultRes(StatusCode.BAD_REQUEST, "성별을 입력하세요."), HttpStatus.OK);
+
                                 case "popular" :
-                                    return new ResponseEntity(productsService.findCategoryProductsByPopular(curIdx, type_idx), HttpStatus.OK);
+                                    if(gender.isPresent()){
+                                        return new ResponseEntity(productsService.findCategoryProductsByPopular(curIdx, type_idx, gender.get()), HttpStatus.OK);
+                                    }
+                                    return new ResponseEntity(new DefaultRes(StatusCode.BAD_REQUEST, "성별을 입력하세요."), HttpStatus.OK);
                             }
                         }
                     case "brand":

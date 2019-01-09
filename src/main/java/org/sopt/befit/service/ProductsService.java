@@ -82,9 +82,9 @@ public class ProductsService
     }
 
     //product의 category조회 신상품순
-    public DefaultRes findCategoryProductsByNew(final int curIdx, final int category){
+    public DefaultRes findCategoryProductsByNew(final int curIdx, final int category, final String gender){
         try{
-            List<ProductReq> result = ListParse( productsMapper.findByCategoryNew(category, curIdx));
+            List<ProductReq> result = ListParse( productsMapper.findByCategoryNew(category, curIdx, gender));
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CATEGORY_PRODUCTS_NEW,  result);
         }catch (Exception e){
             log.error(e.getMessage());
@@ -93,9 +93,9 @@ public class ProductsService
     }
 
     //product의 category조회 인기순
-    public DefaultRes findCategoryProductsByPopular(final int curIdx, final int category){
+    public DefaultRes findCategoryProductsByPopular(final int curIdx, final int category, final String gender){
         try{
-            List<ProductReq> result = ListParse( productsMapper.findByCategoryPopular(category, curIdx));
+            List<ProductReq> result = ListParse( productsMapper.findByCategoryPopular(category, curIdx, gender));
             return DefaultRes.res(StatusCode.OK, ResponseMessage.READ_CATEGORY_PRODUCTS_POPULAR, result);
         }catch (Exception e){
             log.error(e.getMessage());

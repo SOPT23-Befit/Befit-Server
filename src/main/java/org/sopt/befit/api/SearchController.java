@@ -65,6 +65,9 @@ public class SearchController {
         try {
             if(header != null){
                 int curIdx = jwtService.decode(header).getIdx();
+                log.info("searching =" + name);
+                log.info(name);
+
                 if(!name.equals("")){
                     //upper string 처리
                     switch (type){

@@ -19,9 +19,12 @@ public class MeasureConvert {
             };
     private static String values[][] =
             {
-                    {"총장", "가슴단면", "소매길이", "어깨너비"},
-                    {"총장", "허리단면", "허벅지단면", "밑위", "밑단단면"},
-                    {"총장", "허리단면", "밑단단면"}
+                    {"totalLength", "chestSection", "sleeveLength", "shoulderWidth"},
+                    {"totalLength", "waistSection", "thighSection", "crotch", "dobladillosSection"},
+                    {"totalLength", "waistSection", "dobladillosSection"}
+//                    {"총장", "가슴단면", "소매길이", "어깨너비"},
+//                    {"총장", "허리단면", "허벅지단면", "밑위", "밑단단면"},
+//                    {"총장", "허리단면", "밑단단면"}
             };
     private static HashMap<Integer, String[]> map = new HashMap<Integer, String[]>();
 

@@ -60,12 +60,9 @@ public class UserService {
             if (user == null) {
                 try {
                     //암호화
-                    log.info(signUpReq.getPassword());
                     //getsalt() : 숫자가 높아질수록 해쉬를 생성하고 검증하는 시간은 느려진다. 즉, 보안이 우수해진다. 하지만 그만큼 응답 시간이 느려지기 때문에 적절한 숫자를 선정해야 한다. 기본값은 10이다.
                     String passwordHashed = BCrypt.hashpw(signUpReq.getPassword(), BCrypt.gensalt());
                     signUpReq.setPassword(passwordHashed);
-                    log.info(signUpReq.getPassword());
-
                     //mapper 사용
                     userMapper.save(signUpReq);
                     return DefaultRes.res(StatusCode.CREATED, ResponseMessage.CREATED_USER);

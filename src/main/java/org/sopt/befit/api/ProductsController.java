@@ -70,8 +70,17 @@ public class ProductsController {
                         if(type_idx>=0 && type_idx<=15){//category 범위 올바른지 확인
                             switch (sort){ //sorting 방법
                                 case "new" :
+                                    String genderParse ="";
                                     if(gender.isPresent()){
-                                        return new ResponseEntity(productsService.findCategoryProductsByNew(curIdx, type_idx, gender.get()), HttpStatus.OK);
+                                        switch (gender.get()){
+                                            case "w" :
+                                                genderParse = "여성";
+                                                break;
+                                            case "m" :
+                                                genderParse = "남성";
+                                                break;
+                                        }
+                                        return new ResponseEntity(productsService.findCategoryProductsByNew(curIdx, type_idx, genderParse), HttpStatus.OK);
                                     }
                                     return new ResponseEntity(new DefaultRes(StatusCode.BAD_REQUEST, "성별을 입력하세요."), HttpStatus.OK);
 

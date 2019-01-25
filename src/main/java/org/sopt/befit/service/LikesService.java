@@ -113,7 +113,7 @@ public class LikesService {
                 }
                 return DefaultRes.res(StatusCode.CONFLICT, ResponseMessage.ALREADY_LIKE);
             }
-            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_BRAND);
+            return DefaultRes.res(StatusCode.NOT_FOUND, ResponseMessage.NOT_FOUND_PRODUCTS);
         } catch (Exception e) {
             //Rollback
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

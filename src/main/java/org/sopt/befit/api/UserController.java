@@ -54,7 +54,6 @@ public class UserController {
     @PostMapping("/passwordFind") //befit 회원 조회 : 패스워드 변경을 위한 회원 정보 조회하기
     public ResponseEntity checkUser (@RequestBody final PasswordFind passwordFind){
         try{
-            log.info(passwordFind.toString());
             return new ResponseEntity(userService.InformForSetNewPass(passwordFind), HttpStatus.OK);
         }catch (Exception e){
             log.error(e.getMessage());
@@ -65,7 +64,6 @@ public class UserController {
     @PostMapping("") // befit 회원 가입
     public ResponseEntity signup(@RequestBody final SignUpReq signUpReq) {
         try {
-            log.info(signUpReq.toString());
             return new ResponseEntity<>(userService.save(signUpReq), HttpStatus.OK);
         }catch (Exception e) {
             log.error(e.getMessage());
